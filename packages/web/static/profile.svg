@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Components" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        fill: #7d8590;
+      }
+    </style>
+  </defs>
+  <circle class="cls-1" cx="30" cy="30" r="30"/>
+  <circle class="cls-2" cx="30" cy="19.35" r="10.65"/>
+  <path class="cls-2" d="m30,37.02c-9.58,0-17.63,6.54-19.93,15.39,5.3,4.72,12.28,7.59,19.93,7.59s14.63-2.87,19.93-7.59c-2.31-8.85-10.36-15.39-19.93-15.39Z"/>
+</svg>

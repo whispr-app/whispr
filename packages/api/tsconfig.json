@@ -1,0 +1,21 @@
+{
+  "typeRoots": [
+      "./node_module/@types",
+      "./src/types"
+  ],
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "CommonJS",
+    "baseUrl": "src",
+    "resolveJsonModule": true,
+    "paths": {
+      "@lib/*": ["lib/*"],
+    },
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "outDir": "dist",
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

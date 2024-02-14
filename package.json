@@ -1,0 +1,19 @@
+{
+  "name": "whispr",
+  "version": "0.1.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nx run-many -t dev --parallel=8192",
+    "build": "nx run-many -t build --parallel=8192 && concurrently \"npm:build:*\"",
+    "build:mjs": "esbuild packages/api/dist/index.mjs --bundle --format=esm --platform=node --outfile=dist/bundle.mjs --sourcemap",
+    "build:cjs": "esbuild packages/api/dist/index.mjs --bundle --format=cjs --platform=node --outfile=dist/bundle.cjs --sourcemap",
+    "start": "node dist/bundle.cjs"
+  },
+  "private": true,
+  "devDependencies": {
+    "@nx/js": "18.0.4",
+    "concurrently": "^8.2.2",
+    "esbuild": "0.20.0",
+    "nx": "18.0.4"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "typeRoots": [
+      "./node_module/@types",
+      "./src/types"
+  ],
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "baseUrl": "src",
+    "lib": ["ESNext", "DOM"],
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+  },
+  "include": ["src/**/*", "scripts"],
+  "exclude": ["node_modules"],
+  "rootDir": "./src",
+  "outDir": "./dist",
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@whispr/types",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "",
+  "scripts": {
+    "build": "concurrently \"npm:build:*\"",
+    "build:dts": "tsc --declaration --emitDeclarationOnly --declarationMap --outDir dist src/index.ts --target esnext",
+    "build:esm": "esbuild src/index.ts --outfile=dist/index.mjs --format=esm --packages=external --platform=node --sourcemap",
+    "build:cjs": "esbuild src/index.ts --outfile=dist/index.cjs --format=cjs --packages=external --platform=node --sourcemap"
+  },
+  "types": "dist/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "keywords": [],
+  "author": "Morgan Dilling",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "esbuild": "0.20.0",
+    "nodemon": "^3.0.3"
+  },
+  "dependencies": {
+    "typescript": "^5.3.3"
+  }
+}
