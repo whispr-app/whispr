@@ -15,6 +15,7 @@ You will need:
 
 - [Node.js](https://nodejs.org/en/) (latest LTS version)
 - [pnpm](https://pnpm.io/)
+- [MongoDB](https://www.mongodb.com/try/download/community)
 
 ### Instructions
 
