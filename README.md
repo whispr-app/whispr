@@ -19,7 +19,7 @@ You will need:
 
 ### Instructions
 
-1. Install dependencies with `pnpm install`.
+1. Install dependencies with `pnpm install`. Note that you will need `g++` and `cmake` to run a postinstall script so make sure you have those beforehand. On linux you can install them with `sudo apt install g++ cmake`.
 2. Create a `.env` file in `packages/api` of the project with the following contents and replacing user, password, address, port and database with your MongoDB connection details:
 
 ```env
