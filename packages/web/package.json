@@ -22,7 +22,7 @@
 		}
 	},
 	"devDependencies": {
-		"@openpgp/web-stream-tools": "0.1.1",
+		"@openpgp/web-stream-tools": "0.0.11-patch-0",
 		"@sveltejs/adapter-auto": "^3.1.1",
 		"@sveltejs/adapter-static": "^3.0.1",
 		"@sveltejs/kit": "^2.5.1",
@@ -53,6 +53,6 @@
 	"dependencies": {
 		"@whispr/types": "workspace:^",
 		"axios": "^1.6.7",
-		"openpgp": "^5.11.1"
+		"openpgp": "^5.11.0"
 	}
 }

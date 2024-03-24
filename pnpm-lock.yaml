@@ -143,12 +143,12 @@ importers:
         specifier: ^1.6.7
         version: 1.6.7(debug@4.3.4)
       openpgp:
-        specifier: ^5.11.1
+        specifier: ^5.11.0
         version: 5.11.1
     devDependencies:
       '@openpgp/web-stream-tools':
-        specifier: 0.1.1
-        version: 0.1.1(typescript@5.3.3)
+        specifier: 0.0.11-patch-0
+        version: 0.0.11-patch-0
       '@sveltejs/adapter-auto':
         specifier: ^3.1.1
         version: 3.1.1(@sveltejs/kit@2.5.1)
@@ -2033,6 +2033,11 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
+  /@mattiasbuelens/web-streams-adapter@0.1.0:
+    resolution: {integrity: sha512-oV4PyZfwJNtmFWhvlJLqYIX1Nn22ML8FZpS16ZUKv0hg7414xV1fjsGqxQzLT2dyK92TKxsJSwMOd7VNHAtPmA==}
+    engines: {node: '>= 12'}
+    dev: true
+
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -2273,16 +2278,11 @@ packages:
       - debug
     dev: true
 
-  /@openpgp/web-stream-tools@0.1.1(typescript@5.3.3):
-    resolution: {integrity: sha512-1WkV+z78S8DJNlUiCPxSjsna6gfAGCVuepL2KUDlBztXzhvplwWr4lAvsWcYzFkHykaFoCSOV9ssiRRq7QzydQ==}
-    engines: {node: '>= 16.5.0'}
-    peerDependencies:
-      typescript: '>=4.2'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
+  /@openpgp/web-stream-tools@0.0.11-patch-0:
+    resolution: {integrity: sha512-NrIF4DkCqC3WDcMDAgz17z+0Iik1fVrKuvdbjZXCnMZgYAWHpIG8CWnbp8yQRahAdF26jqCopA/qXrp8CYI2yw==}
     dependencies:
-      typescript: 5.3.3
+      '@mattiasbuelens/web-streams-adapter': 0.1.0
+      web-streams-polyfill: 3.0.3
     dev: true
 
   /@phenomnomnominal/tsquery@5.0.1(typescript@5.3.3):
@@ -6098,6 +6098,11 @@ packages:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
     dependencies:
       defaults: 1.0.4
+    dev: true
+
+  /web-streams-polyfill@3.0.3:
+    resolution: {integrity: sha512-d2H/t0eqRNM4w2WvmTdoeIvzAUSpK7JmATB8Nr2lb7nQ9BTIJVjbQ/TRFVEh2gUH1HwclPdoPtfMoFfetXaZnA==}
+    engines: {node: '>= 8'}
     dev: true
 
   /which@2.0.2:
