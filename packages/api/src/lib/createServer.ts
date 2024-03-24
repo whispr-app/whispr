@@ -71,6 +71,9 @@ app.use(`${path}/v0`, v0);
 if (env !== 'dev') {
   // todo: refactor this into a single function call for both 404 and non-404 :)
   for (const [path, data] of Object.entries(paths)) {
+    console.log(path);
+    if (path.endsWith('.html')) console.log(data[0], data[1]);
+
     const mimeType = data[0];
     const buffer = Buffer.from(data[1], 'base64');
     const contentType = mimeTypes.contentType(mimeType);
@@ -82,7 +85,7 @@ if (env !== 'dev') {
   const _404MimeType = _404Data[0];
   const _404Buf = Buffer.from(_404Data[1], 'base64');
   const _404ContentType = mimeTypes.contentType(_404MimeType);
-  app.get('/', (_req, res) =>
+  app.get('/*', (_req, res) =>
     res.setHeader('content-type', _404ContentType || _404MimeType).send(_404Buf)
   );
 }
