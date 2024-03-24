@@ -55,7 +55,7 @@
 
 <style lang="scss">
 	@use 'lib/styles/colours.scss' as colours;
-	@import url('https://fonts.nexus/css?display=swap&family=Bootstrap+Icons&local=true');
+	@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
 
 	@font-face {
 		font-family: 'Mona Sans';
