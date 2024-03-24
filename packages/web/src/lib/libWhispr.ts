@@ -4,7 +4,12 @@ import axios from 'axios';
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
-const url = import.meta.env.DEV ? 'localhost:28980' : 'whispr.cx/api';
+const ipRegex =
+	/^((((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))|((([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))))(?:\/api(?:\/.*)?)?/iu;
+
+const url = import.meta.env.DEV
+	? 'localhost:28980'
+	: `${typeof window !== 'undefined' ? window.location.host : ''}/api`;
 
 console.log('api url', url);
 
@@ -464,7 +469,7 @@ export class LibWhispr {
 
 export const libWhispr = new LibWhispr(url, {
 	version: 'v0',
-	secure: import.meta.env.PROD
+	secure: url.includes('localhost') || ipRegex.test(url) ? false : import.meta.env.PROD
 });
 
 export const authedUser = writable<AuthStore | null>(
