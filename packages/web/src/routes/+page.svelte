@@ -13,6 +13,10 @@
 </svelte:head>
 
 <Header />
+<div class="warning">
+	⚠️ WARNING! Whispr is currently in development and very much in an unfinished state. Data is
+	subject to be wiped and you shouldn't rely on this for secure communication yet.
+</div>
 <section>
 	<h1>Privacy that just <GradientText>makes sense.</GradientText></h1>
 	<h2>Scroll down to find out more.</h2>
@@ -71,6 +75,12 @@
 <style lang="scss">
 	@use 'lib/styles/colours.scss' as colours;
 	@use 'lib/styles/textSize.scss' as textSize;
+
+	.warning {
+		color: colours.$warning-100;
+		padding: 1rem;
+		text-align: center;
+	}
 
 	h1 {
 		font-size: textSize.$largest;
