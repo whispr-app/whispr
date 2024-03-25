@@ -1,3 +1,4 @@
+/** This should be used for application errors that require a sensible message for the user */
 export class AppError extends Error {
   statusCode = 400;
   static typeToCode = {
@@ -14,6 +15,7 @@ export class AppError extends Error {
   }
 }
 
+/** This should be used if a required environment variable is not set */
 export class EnvVarNotSet extends Error {
   constructor(envVar: string) {
     super();
@@ -21,6 +23,7 @@ export class EnvVarNotSet extends Error {
   }
 }
 
+/** This should be used if the options used to generate a token are invalid */
 export class InvalidTokenOptions extends Error {
   constructor() {
     super();
@@ -28,6 +31,7 @@ export class InvalidTokenOptions extends Error {
   }
 }
 
+/** This should be used if the token verification process fails */
 export class InvalidToken extends Error {
   constructor(reason: string) {
     super();
@@ -35,6 +39,7 @@ export class InvalidToken extends Error {
   }
 }
 
+/** This should be used if the database is unable to delete a token, usually because it has already been deleted */
 export class CannotRevokeToken extends Error {
   constructor(token: string) {
     super();
@@ -42,6 +47,7 @@ export class CannotRevokeToken extends Error {
   }
 }
 
+/** This should be used when the database cannot find a specified record */
 export class RecordNotFound extends Error {
   constructor(record: string) {
     super();
@@ -49,6 +55,7 @@ export class RecordNotFound extends Error {
   }
 }
 
+/** This should be used the domain check fails */
 export class DomainCheckNotValid extends Error {
   constructor(domain: string) {
     super();
@@ -56,6 +63,7 @@ export class DomainCheckNotValid extends Error {
   }
 }
 
+/** This should be used if the domain was not specified in production mode */
 export class DomainNotSpecified extends Error {
   constructor() {
     super();
@@ -64,6 +72,7 @@ export class DomainNotSpecified extends Error {
   }
 }
 
+/** This should be used when the server version doesn't fit the format of semantic versioning */
 export class NotValidVersion extends Error {
   constructor(version: string) {
     super();
@@ -71,6 +80,7 @@ export class NotValidVersion extends Error {
   }
 }
 
+/** This should be used when trying to fetch the package.json's version and it is not present */
 export class PackageVersionNotFound extends Error {
   constructor() {
     super();
