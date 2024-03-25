@@ -5,7 +5,7 @@
 	export let profileUrl: string = '';
 	export let username: string = '';
 
-	import formateDate from '$lib/formateDate';
+	import formatDate from '$lib/formatDate';
 
 	const resolveProfile = async (url: string): Promise<string> => {
 		if (url) {
@@ -43,7 +43,7 @@
 			<p class="separator">•</p>
 		{/if}
 		<p class="date" class:no-left-margin={groupMessage === true && sentByMe === false}>
-			{formateDate(date)}
+			{formatDate(date)}
 		</p>
 	</div>
 </div>
