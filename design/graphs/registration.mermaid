@@ -1,0 +1,36 @@
+sequenceDiagram
+autonumber
+    participant User
+    participant Client
+    participant Server
+
+    User->>Client: User selects host
+    alt Is host not Whispr?
+    Client->>Server: GET {DOMAIN}/api/
+    alt Is domain valid?
+        Client-->>User: Check successful
+    else
+        Server-->>Client: 404: Error
+        Client-->>User: Display error and ask user<br>to pick another host
+    end
+    end
+    User->>Client: User creates credentials<br>(username, password, nickname)
+    alt Password doesn't match criteria?
+        Client-->>User: Display error, inform which<br>criteria needs to be met.
+    end
+    Client->>Client: Generate salt
+    Client->>Client: PBKDF2(password, saltBuffer)
+    Client->>Server: POST /users/register
+    alt User already exists?
+        Server-->>Client: "User already exists"
+        Client-->>User: Display error
+    end
+    Server->>Server: Generate salt
+    Server->>Server: PBKDF2(password, generatedSalt)
+    Server->>Server: Generate token
+    Server-->>Client: { token }
+    Client->>Client: Generate key pair & encrypt private key
+    Client->>Server: POST /users/update-key-pair
+    Server-->>Client: 200: Success
+    Client-->>User: Successful registration, <br>redirect to main application
+    

@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    participant User
+    participant Client
+    participant Server
+
+    User->>Client: Inputs user credentials
+    Client->>Server: GET /users/get-user-password-salt/:username
+    Server-->>Client: { salt }
+    Client->>Client: Decode salt from base64
+    Client->>Client: PBKDF2(password, saltBuffer)
+    Client-->>Client: hashedPassword
+    Client->>Server: POST /auth/sign-in
+    Server->>Server: getUser(username)
+    Server->>Server: isPasswordValid(password)
+    alt User doesn't exist
+    Server-->>Client: "User doesn't exist"
+    Client-->>User: Display error
+    else Password doesn't match hashed saved password
+    Server-->>Client: "Incorrect password"
+    Client-->>User: Display error
+    else
+    Server-->>Client: { token, id, encryptedPrivateKey, publicKey }
+    Client->>Client: Derive encryptedPrivateKey using password
+    Client->>Client: Set authentication store
+    Client-->>User: Successful login, <br>redirect to main application
+    end

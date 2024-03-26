@@ -1,0 +1,18 @@
+sequenceDiagram
+autonumber
+    participant Client
+    participant Server
+
+    Client->>Server: WS /gateway/:token
+    alt Token not valid?
+    Server-->>Client: "Token invalid"
+    Client->>Server: Re-login
+    Server-->>Client: { token }
+    end
+    Client->>Server: Establish WebSocket connection
+    Server-->>Client: OpCode.Hello
+    loop heartbeat (25s)
+    Client->>Server: OpCode.Heartbeat
+    Server-->>Client: OpCode.HeartbeatAck
+    end
+    Server-->>Client: OpCode.Notification<br>(e.g. new messages)
