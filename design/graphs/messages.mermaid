@@ -1,0 +1,15 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant Server
+
+    Client->>Client: Get current channel
+    Client->>Client: Get user of current channel
+    Client->>Client: Generate Symmetric key
+    loop Prepare encrypted messages for both participants
+        Client->>Client: Fetch foreign public key
+        Client->>Client: Encrypt symmetric key using user's private and foreign public key
+        Client->>Client: Encrypt message content using symmetric key
+    end
+    Client->>Server: POST /channels/:channelId/messages
+    Server-->>Client: Receive messages via WebSocket
