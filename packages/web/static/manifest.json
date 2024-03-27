@@ -2,7 +2,7 @@
 	"name": "Whispr",
 	"version": "0.1.0",
 	"display": "standalone",
-	"start_url": ".",
+	"start_url": "/login",
 	"background_color": "#222831",
 	"description": "A simple, lightweight, and secure messaging app.",
 	"icons": [
