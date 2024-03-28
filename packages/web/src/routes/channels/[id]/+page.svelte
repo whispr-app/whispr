@@ -599,7 +599,6 @@
 				.back {
 					border-radius: 100px;
 					padding: 10px;
-					background-color: colours.$background-100;
 					display: flex;
 					justify-content: center;
 					align-items: center;
@@ -609,6 +608,7 @@
 
 					i {
 						color: colours.$text-100;
+						scale: 1.5;
 					}
 				}
 			}
