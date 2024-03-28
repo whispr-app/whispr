@@ -38,13 +38,13 @@
 		height: 12rem;
 		display: flex;
 		justify-content: center;
-		align-items: center;
+		align-items: start;
 
 		.container {
 			display: flex;
 			flex-direction: row;
 			justify-content: space-evenly;
-			align-items: top;
+			align-items: start;
 
 			* {
 				text-align: center;
@@ -54,10 +54,11 @@
 		}
 	}
 
-	@media screen and (max-width: 830px) {
-		footer {
-			flex-direction: column;
-			height: auto;
+	@media (max-width: 768px) {
+		footer .container {
+			flex-direction: column !important;
+			height: auto !important;
+			align-items: center !important;
 		}
 	}
 </style>
