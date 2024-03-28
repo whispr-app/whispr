@@ -28,6 +28,10 @@ if (!version || (version && !version.match(/^(\d+\.)?(\d+\.)?(\*|\d+)$/)))
 export const { app, applyTo, getWss } = expressWs(express());
 
 if (env === 'dev') {
+  app.use((req, res, next) => {
+    console.log(req.headers['user-agent']);
+    next();
+  });
   app.use(
     responseTime((req: Request, res: Response, time) => {
       console.log(
