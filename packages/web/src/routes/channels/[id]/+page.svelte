@@ -14,6 +14,8 @@
 
 	$: mobile = navigator.userAgent.match(/Mobi/);
 
+	let chatElement: HTMLElement | null = null;
+
 	let chatSearchString = '';
 
 	const emojiRegex =
@@ -135,32 +137,38 @@
 		messages.set(_messages);
 
 		if (mounted && id !== '@self') {
-			libWhispr.fetchMessages(id).then(async (response) => {
-				for (const msg of response.reverse()) {
-					const content = await libWhispr.decryptMessageContent(
-						msg.content.cipherText,
-						msg.author,
-						msg.content.encryptedSymmetricKey
-					);
+			libWhispr
+				.fetchMessages(id)
+				.then(async (response) => {
+					for (const msg of response.reverse()) {
+						const content = await libWhispr.decryptMessageContent(
+							msg.content.cipherText,
+							msg.author,
+							msg.content.encryptedSymmetricKey
+						);
 
-					msg.content = content;
+						msg.content = content;
 
-					const lastMessageCluster = _messages[0];
+						const lastMessageCluster = _messages[0];
 
-					if (
-						lastMessageCluster &&
-						lastMessageCluster[0].author.id === msg.author.id &&
-						new Date(msg.createdAt).getTime() -
-							new Date(lastMessageCluster[0].createdAt).getTime() <
-							300000
-					) {
-						lastMessageCluster.unshift(msg);
-					} else {
-						_messages.unshift([msg]);
+						if (
+							lastMessageCluster &&
+							lastMessageCluster[0].author.id === msg.author.id &&
+							new Date(msg.createdAt).getTime() -
+								new Date(lastMessageCluster[0].createdAt).getTime() <
+								300000
+						) {
+							lastMessageCluster.unshift(msg);
+						} else {
+							_messages.unshift([msg]);
+						}
 					}
-				}
-				messages.set(_messages);
-			});
+					messages.set(_messages);
+				})
+				.then(() => {
+					chatElement?.scrollTo(0, chatElement.scrollHeight);
+					console.log(chatElement?.scrollHeight, chatElement?.scrollTop);
+				});
 		}
 	}
 
@@ -505,7 +513,7 @@
 						{/await}
 					{/if}
 				</div>
-				<div class="chat">
+				<div bind:this={chatElement} class="chat">
 					{#each $messages as messageCluster}
 						<!-- profileUrl={messageCluster[messageCluster.length - 1].author.avatar} -->
 						<Message
@@ -587,6 +595,22 @@
 				.handle {
 					color: colours.$text-secondary-100;
 				}
+
+				.back {
+					border-radius: 100px;
+					padding: 10px;
+					background-color: colours.$background-100;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					aspect-ratio: 1;
+					height: 20px;
+					width: 20px;
+
+					i {
+						color: colours.$text-100;
+					}
+				}
 			}
 
 			.chat {
@@ -659,15 +683,6 @@
 
 				i {
 					color: colours.$text-secondary-100;
-				}
-
-				.back {
-					border-radius: 50%;
-					background-color: colours.$background-100;
-
-					i {
-						color: colours.$text-100;
-					}
 				}
 			}
 		}
