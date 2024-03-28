@@ -148,7 +148,7 @@
 	}
 	main {
 		width: 100vw;
-		height: 100vh;
+		height: 100dvh;
 		background-image: url('/wave.svg');
 		background-repeat: no-repeat;
 		background-size: cover;
@@ -156,6 +156,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		-webkit-overflow-scrolling: auto;
 	}
 
 	button {

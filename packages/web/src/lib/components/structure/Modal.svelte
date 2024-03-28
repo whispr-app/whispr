@@ -1,13 +1,13 @@
-<dialog>
+<div>
 	<slot />
-</dialog>
+</div>
 
 <style lang="scss">
 	@use 'lib/styles/colours.scss' as colours;
 	@use 'lib/styles/zIndexes.scss' as zIndexes;
 
-	dialog {
-		min-width: 450px;
+	div {
+		// min-width: 450px;
 
 		display: flex;
 		flex-direction: column;
@@ -24,6 +24,8 @@
 		box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.3);
 
 		padding: 25px;
+		padding-left: 40px;
+		padding-right: 40px;
 
 		&::backdrop {
 			background-color: colours.$background-50;
@@ -32,6 +34,13 @@
 			left: 0;
 			width: 100vw;
 			height: 100vh;
+		}
+	}
+
+	@media (max-width: 768px) {
+		div {
+			scale: 0.8;
+			margin: 0;
 		}
 	}
 </style>

@@ -43,15 +43,17 @@
 	// };
 </script>
 
-<div class="no-mobile">
+<!-- <div class="no-mobile">
 	<div>
 		<WhisprLogoWhite />
 	</div>
 	<h1>Mobile currently isn't supported.</h1>
 	<h2>Feel free to have a look on a desktop.</h2>
-</div>
+</div> -->
 
-<slot />
+<div class="wrapper">
+	<slot />
+</div>
 
 <style lang="scss">
 	@use 'lib/styles/colours.scss' as colours;
@@ -64,6 +66,26 @@
 			url('$lib/Mona-Sans.woff2') format('woff2-variations');
 		font-weight: 200 900;
 		font-stretch: 75% 125%;
+	}
+
+	.wrapper {
+		position: absolute;
+		left: 0;
+		width: 100%;
+		bottom: 0;
+		height: 100%;
+	}
+
+	// @media (min-width: 768px) {
+	// 	.PWA-mobile-wrapper {
+	// 		bottom: 15px;
+	// 		height: calc(100% - 15px);
+	// 	}
+	// }
+
+	:global(html),
+	:global(body) {
+		overscroll-behavior-y: none;
 	}
 
 	:global(html) {
