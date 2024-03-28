@@ -1,4 +1,9 @@
-<svg id="Brand" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 298.97 78.16">
+<svg
+	id="Brand"
+	xmlns="http://www.w3.org/2000/svg"
+	viewBox="0 0 298.97 78.16"
+	style="width: 160px !important; height: 40px !important;"
+>
 	<defs>
 		<style>
 			.cls-1 {
