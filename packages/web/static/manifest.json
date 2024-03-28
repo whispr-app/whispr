@@ -8,6 +8,11 @@
 	"description": "A simple, lightweight, and secure messaging app.",
 	"icons": [
 		{
+			"src": "pwa-icon.svg",
+			"type": "image/svg+xml",
+			"sizes": "any"
+		},
+		{
 			"src": "images/touch/whispr-logo-48.png",
 			"sizes": "48x48",
 			"type": "image/png"
