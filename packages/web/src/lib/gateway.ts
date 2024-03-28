@@ -31,6 +31,7 @@ export class Gateway {
 			this.socket = null;
 			this.uuid = '';
 		}
+		if (!libWhispr.authStore?.token) return;
 		this.socket =
 			(browser &&
 				new WebSocket(libWhispr.constructWsUrl(`gateway/${libWhispr.authStore?.token}`))) ||
