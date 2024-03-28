@@ -12,6 +12,8 @@
 	import Message from '$lib/components/Message.svelte';
 	import MockText from '$lib/components/MockText.svelte';
 
+	$: mobile = navigator.userAgent.match(/Mobi/);
+
 	let chatSearchString = '';
 
 	const emojiRegex =
@@ -293,29 +295,151 @@
 	</div>
 {/if}
 
-<div class="top">
-	<div class="side-bar">
-		<div class="options">
-			<button on:click={signout} class="profile">
-				<!-- <i class="bi bi-person"></i> -->
-				<i class="bi bi-box-arrow-right"></i>
-			</button>
-			<!-- <button>
+{#if !mobile}
+	<div class="top">
+		<div class="side-bar">
+			<div class="options">
+				<button on:click={signout} class="profile">
+					<!-- <i class="bi bi-person"></i> -->
+					<i class="bi bi-box-arrow-right"></i>
+				</button>
+				<!-- <button>
 				<i class="bi bi-gear"></i>
 			</button> -->
+			</div>
+			<div class="chats-options">
+				<Input bind:value={chatSearchString} placeholder="Search chats"
+					><i class="bi bi-search"></i></Input
+				>
+				<button
+					class="new-chat"
+					on:click={() => {
+						createChannelModalOpen = true;
+					}}
+				>
+					<i class="bi bi-pencil"></i>
+				</button>
+			</div>
+			<div class="chats">
+				{#each $channels as channel}
+					<a href="/channels/{channel.id}">
+						<div>
+							<div class="name-and-time">
+								<h2 class="name">
+									{channel.userChannelPermissions.length === 2
+										? getUserFromUsers(channel.userChannelPermissions)?.nickname
+										: channel.name}
+								</h2>
+								{#if channel.lastMessageId}
+									<h2 class="time" id={`${channel.id}-time`}>
+										{#await libWhispr.getMessage(channel.id, channel.lastMessageId)}
+											<MockText style="height: 20px; width: 40px;" />
+										{:then message}
+											{getTimeSince(new Date(message.createdAt).getTime())}
+										{/await}
+									</h2>
+								{/if}
+							</div>
+							{#if channel.lastMessageId}
+								{#await libWhispr.getMessage(channel.id, channel.lastMessageId) then message}
+									{#await libWhispr.decryptMessageContent(message.content.cipherText, message.author, message.content.encryptedSymmetricKey)}
+										<p id={`${channel.id}-message`}>
+											<MockText style="height: 20px; width: 100px;" />.
+										</p>
+									{:then decryptedMessage}
+										<p id={`${channel.id}-message`}>
+											{`${message.author.nickname}: ${decryptedMessage}`}
+										</p>
+									{/await}
+								{/await}
+							{/if}
+						</div>
+					</a>
+					<br />
+				{/each}
+			</div>
+			<div class="fade-out"></div>
 		</div>
-		<div class="chats-options">
-			<Input bind:value={chatSearchString} placeholder="Search chats"
-				><i class="bi bi-search"></i></Input
-			>
-			<button
-				class="new-chat"
-				on:click={() => {
-					createChannelModalOpen = true;
-				}}
-			>
-				<i class="bi bi-pencil"></i>
-			</button>
+		<div class="main">
+			<div class="top-bar">
+				{#if id !== '@self'}
+					{#await libWhispr.getChannel(id)}
+						<h2><MockText style="height: 20px; width: 300px;" /></h2>
+						<h3 class="handle"><MockText style="height: 20px; width: 200px;" /></h3>
+					{:then channel}
+						<h2>
+							{channel.userChannelPermissions.length === 2
+								? getUserFromUsers(channel.userChannelPermissions)?.nickname
+								: channel.name}
+						</h2>
+						<h3 class="handle">
+							{`${
+								channel.userChannelPermissions.length === 2
+									? getUserFromUsers(channel.userChannelPermissions)?.username
+									: channel.name
+							}@${(browser && window.location.hostname) || ''}`}
+						</h3>
+					{/await}
+				{/if}
+			</div>
+			<div class="chat">
+				{#each $messages as messageCluster}
+					<!-- profileUrl={messageCluster[messageCluster.length - 1].author.avatar} -->
+					<Message
+						date={new Date(messageCluster[0].createdAt)}
+						username={messageCluster[0].author.nickname}
+						sentByMe={messageCluster[0].author.id === $authedUser?.userId}
+						groupMessage={false}
+					>
+						{#each messageCluster as message}
+							<p class="message-p" class:emoji-large={emojiRegex.test(message.content)}>
+								{message.content}
+							</p>
+						{/each}
+					</Message>
+				{/each}
+			</div>
+			<div class="chat-bar">
+				{#if id !== '@self'}
+					{#await libWhispr.getChannel(id) then channel}
+						<form on:submit|preventDefault={sendMessage}>
+							<Input
+								type="text"
+								bind:value={message}
+								autocomplete="false"
+								placeholder={`Message ${
+									channel.userChannelPermissions.length === 2
+										? getUserFromUsers(channel.userChannelPermissions)?.nickname
+										: channel.name
+								}`}
+							>
+								<!-- <i class="bi bi-paperclip icon"></i> -->
+							</Input>
+							<button>
+								<i class="bi bi-send"></i>
+							</button>
+						</form>
+					{/await}
+				{/if}
+			</div>
+		</div>
+	</div>
+{:else}
+	<div class="mobile">
+		<div class="top">
+			<div class="chats-options">
+				<Input bind:value={chatSearchString} placeholder="Search chats"
+					><i class="bi bi-search"></i></Input
+				>
+				<button
+					class="new-chat"
+					on:click={() => {
+						createChannelModalOpen = true;
+					}}
+				>
+					<i class="bi bi-pencil"></i>
+				</button>
+			</div>
 		</div>
 		<div class="chats">
 			{#each $channels as channel}
@@ -355,77 +479,264 @@
 				<br />
 			{/each}
 		</div>
-		<div class="fade-out"></div>
-	</div>
-	<div class="main">
-		<div class="top-bar">
-			{#if id !== '@self'}
-				{#await libWhispr.getChannel(id)}
-					<h2><MockText style="height: 20px; width: 300px;" /></h2>
-					<h3 class="handle"><MockText style="height: 20px; width: 200px;" /></h3>
-				{:then channel}
-					<h2>
-						{channel.userChannelPermissions.length === 2
-							? getUserFromUsers(channel.userChannelPermissions)?.nickname
-							: channel.name}
-					</h2>
-					<h3 class="handle">
-						{`${
-							channel.userChannelPermissions.length === 2
-								? getUserFromUsers(channel.userChannelPermissions)?.username
-								: channel.name
-						}@${(browser && window.location.hostname) || ''}`}
-					</h3>
-				{/await}
-			{/if}
-		</div>
-		<div class="chat">
-			{#each $messages as messageCluster}
-				<!-- profileUrl={messageCluster[messageCluster.length - 1].author.avatar} -->
-				<Message
-					date={new Date(messageCluster[0].createdAt)}
-					username={messageCluster[0].author.nickname}
-					sentByMe={messageCluster[0].author.id === $authedUser?.userId}
-					groupMessage={false}
-				>
-					{#each messageCluster as message}
-						<p class="message-p" class:emoji-large={emojiRegex.test(message.content)}>
-							{message.content}
-						</p>
-					{/each}
-				</Message>
-			{/each}
-		</div>
-		<div class="chat-bar">
-			{#if id !== '@self'}
-				{#await libWhispr.getChannel(id) then channel}
-					<form on:submit|preventDefault={sendMessage}>
-						<Input
-							type="text"
-							bind:value={message}
-							autocomplete="false"
-							placeholder={`Message ${
-								channel.userChannelPermissions.length === 2
+		{#if id !== '@self'}
+			<div class="channel">
+				<div class="top-bar">
+					{#if id !== '@self'}
+						<a class="back" href="/channels/@self">
+							<i class="bi bi-arrow-left"></i>
+						</a>
+						{#await libWhispr.getChannel(id)}
+							<h2><MockText style="height: 20px; width: 300px;" /></h2>
+							<h3 class="handle"><MockText style="height: 20px; width: 200px;" /></h3>
+						{:then channel}
+							<h2>
+								{channel.userChannelPermissions.length === 2
 									? getUserFromUsers(channel.userChannelPermissions)?.nickname
-									: channel.name
-							}`}
+									: channel.name}
+							</h2>
+							<h3 class="handle">
+								{`${
+									channel.userChannelPermissions.length === 2
+										? getUserFromUsers(channel.userChannelPermissions)?.username
+										: channel.name
+								}@${(browser && window.location.hostname) || ''}`}
+							</h3>
+						{/await}
+					{/if}
+				</div>
+				<div class="chat">
+					{#each $messages as messageCluster}
+						<!-- profileUrl={messageCluster[messageCluster.length - 1].author.avatar} -->
+						<Message
+							date={new Date(messageCluster[0].createdAt)}
+							username={messageCluster[0].author.nickname}
+							sentByMe={messageCluster[0].author.id === $authedUser?.userId}
+							groupMessage={false}
 						>
-							<!-- <i class="bi bi-paperclip icon"></i> -->
-						</Input>
-						<button>
-							<i class="bi bi-send"></i>
-						</button>
-					</form>
-				{/await}
-			{/if}
-		</div>
+							{#each messageCluster as message}
+								<p class="message-p" class:emoji-large={emojiRegex.test(message.content)}>
+									{message.content}
+								</p>
+							{/each}
+						</Message>
+					{/each}
+				</div>
+				<div class="chat-bar">
+					{#if id !== '@self'}
+						{#await libWhispr.getChannel(id) then channel}
+							<form on:submit|preventDefault={sendMessage}>
+								<Input
+									type="text"
+									bind:value={message}
+									autocomplete="false"
+									placeholder={`Message ${
+										channel.userChannelPermissions.length === 2
+											? getUserFromUsers(channel.userChannelPermissions)?.nickname
+											: channel.name
+									}`}
+								>
+									<!-- <i class="bi bi-paperclip icon"></i> -->
+								</Input>
+								<button>
+									<i class="bi bi-send"></i>
+								</button>
+							</form>
+						{/await}
+					{/if}
+				</div>
+			</div>
+		{/if}
 	</div>
-</div>
+{/if}
 
 <style lang="scss">
 	@use 'lib/styles/colours.scss' as colours;
 	@use 'lib/styles/zIndexes.scss' as zIndexes;
 	@use 'lib/styles/textSize.scss' as textSize;
+
+	.mobile {
+		.channel {
+			width: 100%;
+			height: 100%;
+			z-index: 1000;
+			background-color: colours.$background-100;
+			position: absolute;
+			top: 0;
+			left: 0;
+
+			overflow-y: scroll;
+
+			.top-bar {
+				width: calc(100% - 15px);
+				height: 65px;
+				background-color: colours.$background-secondary-100;
+				border-bottom: 1px solid colours.$outline-100;
+
+				padding-left: 15px;
+
+				position: sticky;
+				top: 0;
+
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+
+				gap: 10px;
+
+				.handle {
+					color: colours.$text-secondary-100;
+				}
+			}
+
+			.chat {
+				flex-grow: 1;
+				padding: 10px;
+				width: calc(100% - 20px);
+
+				display: flex;
+				flex-direction: column-reverse;
+
+				overflow-y: scroll;
+			}
+
+			.chat-bar {
+				width: calc(100% - 20px);
+				height: 40px;
+				background: none;
+
+				position: sticky;
+				bottom: 0;
+
+				padding: 10px;
+
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+
+				form {
+					width: 100%;
+
+					text-align: center;
+
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					gap: 10px;
+
+					i {
+						color: colours.$text-secondary-100;
+					}
+				}
+
+				gap: 10px;
+			}
+		}
+
+		.top {
+			position: sticky;
+			top: 0;
+			padding: 10px;
+			height: auto;
+			background-color: colours.$background-secondary-50;
+
+			position: sticky;
+			backdrop-filter: blur(10px);
+
+			.chats-options {
+				padding: 10px;
+				height: 22px;
+
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				gap: 10px;
+
+				.new-chat {
+					height: calc(100% + 20px);
+					aspect-ratio: 1;
+				}
+
+				i {
+					color: colours.$text-secondary-100;
+				}
+
+				.back {
+					border-radius: 50%;
+					background-color: colours.$background-100;
+
+					i {
+						color: colours.$text-100;
+					}
+				}
+			}
+		}
+
+		.chats {
+			width: calc(100% - 20px);
+			height: calc(100% - 20px);
+			overflow-y: scroll;
+			padding: 10px;
+
+			a {
+				text-decoration: none;
+				color: colours.$text-100;
+
+				border-radius: 8px;
+
+				&:hover {
+					background-color: colours.$background-tertiary-100;
+				}
+
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: flex-start;
+
+				padding: 10px;
+
+				div {
+					width: 100%;
+				}
+
+				p {
+					margin: 0;
+					margin-top: 3px;
+					color: colours.$text-secondary-100;
+
+					text-overflow: ellipsis;
+					overflow: hidden;
+					white-space: nowrap;
+				}
+
+				.name-and-time {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					width: 100%;
+
+					h2 {
+						margin: 0;
+					}
+
+					.name {
+						max-width: 300px;
+						overflow: hidden;
+						text-overflow: ellipsis;
+					}
+
+					.time {
+						color: colours.$text-secondary-100;
+						width: 100px;
+						right: 0;
+						text-align: right;
+						display: flex;
+						justify-content: flex-end;
+					}
+				}
+			}
+		}
+	}
 
 	.add-channel {
 		width: 350px;
