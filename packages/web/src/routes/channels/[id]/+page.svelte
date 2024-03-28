@@ -630,7 +630,7 @@
 				background: none;
 
 				position: sticky;
-				bottom: 0;
+				bottom: 10px;
 
 				padding: 10px;
 
@@ -664,8 +664,8 @@
 			height: auto;
 			background-color: colours.$background-secondary-50;
 
-			position: sticky;
 			backdrop-filter: blur(10px);
+			position: sticky;
 
 			.chats-options {
 				padding: 10px;
