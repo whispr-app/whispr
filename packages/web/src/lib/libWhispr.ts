@@ -142,13 +142,12 @@ export class LibWhispr {
 
 	public signout = async () => {
 		if (!this.authStore) throw new Error('Not signed in');
+		this.authStore = null;
+		authedUser.set(null);
 
 		const response = await axios.post(this.constructHttpUrl('auth/sign-out'));
 
 		if (response.status !== 200) throw new Error('Failed to sign out');
-
-		this.authStore = null;
-		authedUser.set(null);
 	};
 
 	public getUser = async (username: string) => {

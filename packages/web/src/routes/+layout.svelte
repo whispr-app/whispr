@@ -20,10 +20,12 @@
 				!error.config.url?.includes('/channels/')
 			) {
 				await libWhispr.signout();
+				goto('/login');
 			}
 			if (error.config.url?.includes('/auth/sign-out')) {
 				libWhispr.authStore = null;
 				authedUser.set(null);
+				goto('/login');
 			}
 			return Promise.reject(error);
 		}
