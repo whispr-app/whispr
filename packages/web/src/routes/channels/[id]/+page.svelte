@@ -53,20 +53,35 @@
 	let createChannelModalOpen: boolean = false;
 	let createChannelUsername = '';
 
+	let createChannelError = '';
+
 	const createChannel = async () => {
 		if (!createChannelUsername) return;
 		const user = await libWhispr.getUser(createChannelUsername).catch((e) => {
-			console.log(e);
+			console.log(e.response.data.message);
+
+			createChannelError = e.response.data.message;
+			console.log(createChannelError);
+
 			return;
 		});
 
 		if (!user) return;
 
-		// TODO: Error handling
-		const response = await libWhispr.createChannel([user.id]);
+		const response = await libWhispr.createChannel([user.id]).catch((e) => {
+			createChannelError = e.response.data.message;
+			return;
+		});
+
+		console.log(response);
+
+		if (response) {
+			goto(`/channels/${response.id}`);
+		}
 
 		createChannelModalOpen = false;
 		createChannelUsername = '';
+		createChannelError = '';
 
 		// window.location.reload();
 	};
@@ -288,8 +303,11 @@
 		<h1>Start a new chat</h1>
 		<form on:submit|preventDefault={createChannel} method="dialog">
 			<!-- <input type="text" id="name" bind:value={username} /> -->
-			<Input bind:value={createChannelUsername} placeholder="Username"
-				><i class="bi bi-type icon"></i></Input
+			<Input
+				bind:value={createChannelUsername}
+				placeholder="Username"
+				highlightError={!!createChannelError}
+				errorMessage={createChannelError}><i class="bi bi-type icon"></i></Input
 			>
 			<br />
 			<button type="submit">Open</button>
@@ -298,6 +316,7 @@
 			on:click={() => {
 				createChannelModalOpen = false;
 				createChannelUsername = '';
+				createChannelError = '';
 			}}>Close</button
 		>
 	</div>
