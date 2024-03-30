@@ -19,7 +19,9 @@
 				!error.config.url?.includes('/auth/sign-out') &&
 				!error.config.url?.includes('/channels/')
 			) {
-				await libWhispr.signout();
+				try {
+					await libWhispr.signout();
+				} catch {}
 				goto('/login');
 			}
 			if (error.config.url?.includes('/auth/sign-out')) {
