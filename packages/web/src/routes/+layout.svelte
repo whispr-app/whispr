@@ -18,7 +18,7 @@
 			if (
 				error.response?.status === 401 &&
 				!error.config.url?.includes('/auth/sign-out') &&
-				!error.config.url?.includes('/channels/')
+				error.response?.data?.message === 'Invalid token'
 			) {
 				try {
 					await libWhispr.signout();
