@@ -100,13 +100,44 @@
 		}[];
 	};
 
-	const _channels: Channel[] = [];
+	let _channels: Channel[] = [];
 	const channels = writable(_channels);
+
+	const sortChannels = async (channels: Channel[]): Promise<Channel[]> => {
+		const lastMessageTimes = new Map<string, number>();
+		for (const channel of channels) {
+			if (channel.lastMessageId) {
+				const message = await libWhispr.getMessage(channel.id, channel.lastMessageId);
+				lastMessageTimes.set(channel.id, new Date(message.createdAt).getTime());
+			}
+		}
+
+		channels.sort((a: Channel, b: Channel) => {
+			const aTime = lastMessageTimes.get(a.id);
+			const bTime = lastMessageTimes.get(b.id);
+
+			console.log(a.id, b.id, aTime, bTime);
+
+			if (aTime && bTime) {
+				return bTime - aTime;
+			} else if (aTime) {
+				return -1;
+			} else if (bTime) {
+				return 1;
+			} else {
+				return 0;
+			}
+		});
+
+		return channels;
+	};
 
 	$: {
 		_channels.length = 0;
 		channels.set(_channels);
-		libWhispr.getChannels().then((response) => {
+		libWhispr.getChannels().then(async (response: Channel[]) => {
+			response = await sortChannels(response);
+
 			for (const channel of response) {
 				_channels.push(channel);
 				channels.set(_channels);
@@ -234,6 +265,7 @@
 					const channel = _channels.find((channel) => channel.id === message.channelId);
 					if (channel) {
 						channel.lastMessageId = message.id;
+						_channels = await sortChannels(_channels);
 						channels.set(_channels);
 					}
 					break;
