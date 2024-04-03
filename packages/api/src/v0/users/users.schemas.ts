@@ -6,6 +6,7 @@ export const RegisterSchema = z.object({
     password: z.string(),
     nickname: z.string(),
     username: z.string(),
+    accessKey: z.string(),
   }),
 });
 export type RegisterSchema = z.infer<typeof RegisterSchema>['body'];

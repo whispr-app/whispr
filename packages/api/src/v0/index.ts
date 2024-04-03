@@ -6,6 +6,7 @@ import auth from './auth/auth.router';
 import channels from './channels/channels.router';
 import gateway from './gateway/gateway.router';
 import users from './users/users.router';
+import admin from './admin/admin.router';
 import { authorisation } from '@lib/middleware';
 
 router.get('/', (req, res) => {
@@ -20,5 +21,6 @@ router.use('/auth', authorisation, auth);
 router.use('/channels', authorisation, channels);
 router.use('/gateway', gateway);
 router.use('/users', authorisation, users);
+router.use('/admin', authorisation, admin);
 
 export default router;

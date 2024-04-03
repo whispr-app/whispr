@@ -3,12 +3,22 @@ import prisma from '@lib/prisma';
 import { Prisma } from '@prisma/client';
 import { hashPassword } from 'v0/auth/auth.service';
 
-export const createUser = async (user: Prisma.UserCreateInput) => {
-  user.password = await hashPassword(user.password);
+export const createUser = async (
+  username: string,
+  nickname: string,
+  password: string,
+  accessKeyId: string
+) => {
+  password = await hashPassword(password);
 
   try {
     const record = await prisma.user.create({
-      data: user,
+      data: {
+        username,
+        nickname,
+        password,
+        accessKeyId,
+      },
       select: {
         id: true,
         nickname: true,

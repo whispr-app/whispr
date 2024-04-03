@@ -10,6 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id       String    @id @default(auto()) @map("_id") @db.ObjectId
   username String    @unique
@@ -18,8 +23,19 @@ model User {
   tokens   Token[]
   keyPair  KeyPair?
   messages Message[]
+  role     Role      @default(USER)
 
   userChannelPermissions UserChannelPermissions[]
+  AccessKey              AccessKey?               @relation(fields: [accessKeyId], references: [id])
+  accessKeyId            String?                  @db.ObjectId
+}
+
+model AccessKey {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  key          String   @unique
+  createdAt    DateTime @default(now())
+  numberOfUses Int      @default(1)
+  users        User[]
 }
 
 model KeyPair {

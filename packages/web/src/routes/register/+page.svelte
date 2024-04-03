@@ -14,6 +14,7 @@
 
 	const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
 
+	let accessKey = '';
 	let username = '';
 	let password = '';
 	let passwordConfirm = '';
@@ -22,6 +23,7 @@
 	let debounce = false;
 	let errorMessage = '';
 
+	let accessKeyError = '';
 	let usernameError = '';
 	let passwordError = '';
 	let passwordConfirmError = '';
@@ -41,6 +43,7 @@
 
 	const register = async (e: Event) => {
 		debounce = true;
+		accessKeyError = '';
 		usernameError = '';
 		passwordError = '';
 		passwordConfirmError = '';
@@ -48,6 +51,12 @@
 		errorMessage = '';
 
 		let canSubmit = true;
+
+		if (!accessKey) {
+			accessKeyError = 'Access key is required at this time.';
+			e.preventDefault();
+			canSubmit = false;
+		}
 
 		if (!username) {
 			usernameError = 'Username is required';
@@ -89,7 +98,7 @@
 		}
 
 		try {
-			const response = await libWhispr.register(password, nickname, username);
+			const response = await libWhispr.register(password, nickname, username, accessKey);
 
 			if (response.status !== 201) {
 				if (response.data.message) {
@@ -108,7 +117,8 @@
 					errorMessage = 'Network error. Try again later';
 				}
 				if (e.response?.data?.message) {
-					usernameError = e.response.data.message;
+					if (e.response?.data?.message.includes('Key')) accessKeyError = e.response?.data?.message;
+					else usernameError = e.response.data.message;
 				}
 			}
 		}
@@ -130,6 +140,19 @@
 			{#if errorMessage}
 				<p class="error-message">{errorMessage}</p>
 			{/if}
+			<Input
+				type="text"
+				placeholder="Access Key"
+				bind:value={accessKey}
+				highlightError={!!accessKeyError}
+				errorMessage={accessKeyError}
+				change={() => {
+					accessKeyError = '';
+					if (accessKey === '') {
+						accessKeyError = 'Access key is required at this time.';
+					}
+				}}><i class="bi bi-123 icon"></i></Input
+			>
 			<p>Create some credentials</p>
 			<Input
 				type="username"

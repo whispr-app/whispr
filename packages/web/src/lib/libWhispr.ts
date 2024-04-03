@@ -54,7 +54,46 @@ export class LibWhispr {
 		this.connectionUrl = connectionUrl;
 	};
 
-	public register = async (password: string, nickname: string, username: string) => {
+	public isAuthorised = async () => {
+		if (!this.authStore) return false;
+		try {
+			await axios.get(this.constructHttpUrl('admin/is-authorised'), {
+				headers: {
+					Authorization: `Bearer ${this.authStore.token}`
+				}
+			});
+			return true;
+		} catch (e) {
+			return false;
+		}
+	};
+
+	public generateKeys = async (nKeys: number, numberOfUses: number) => {
+		if (!this.authStore) return;
+		try {
+			return await axios.post(
+				this.constructHttpUrl('admin/generate-keys'),
+				{
+					keys: nKeys,
+					numberOfUses
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${this.authStore.token}`
+					}
+				}
+			);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	public register = async (
+		password: string,
+		nickname: string,
+		username: string,
+		accessKey: string
+	) => {
 		const saltPwd = this.generateSalt();
 		const saltStringPwd = btoa(String.fromCharCode(...new Uint8Array(saltPwd)));
 		const hashedPassword = await this.pbkdf2(password, saltPwd);
@@ -63,7 +102,8 @@ export class LibWhispr {
 		const response = await axios.post(this.constructHttpUrl('users/register'), {
 			password: `${hashedPasswordString}:${saltStringPwd}`,
 			nickname,
-			username
+			username,
+			accessKey
 		});
 		const { token, id } = response.data;
 

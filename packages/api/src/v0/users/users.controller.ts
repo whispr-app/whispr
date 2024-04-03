@@ -11,6 +11,7 @@ import * as usersService from './users.service';
 import * as channelsService from 'v0/channels/channels.service';
 import { AppError } from '@lib/exceptions';
 import { generateUserToken } from 'v0/auth/auth.service';
+import { redeemKey, unredeemKey } from 'v0/admin/admin.service';
 
 const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
 
@@ -19,7 +20,7 @@ export const register: RequestHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { password, nickname, username } = req.body;
+  const { password, nickname, username, accessKey } = req.body;
 
   if (!usernameRegex.test(username)) {
     return next(
@@ -31,13 +32,19 @@ export const register: RequestHandler = async (
   }
 
   try {
-    const user = await usersService.createUser({
-      password,
-      nickname,
-      username,
+    const key = await redeemKey(accessKey).catch(e => {
+      return next(e);
     });
+    if (!key) return;
+    const user = await usersService.createUser(
+      username,
+      nickname,
+      password,
+      key.id
+    );
 
     if (!user) {
+      await unredeemKey(accessKey);
       return next(new AppError('validation', 'Username already exists'));
     }
 
@@ -53,6 +60,7 @@ export const register: RequestHandler = async (
       return next(e);
     }
 
+    await unredeemKey(accessKey);
     return next(new AppError('validation', 'Invalid input'));
   }
 };
