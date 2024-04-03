@@ -487,6 +487,9 @@
 	<div class="mobile">
 		<div class="top">
 			<div class="chats-options">
+				<button on:click={signout} class="profile">
+					<i class="bi bi-box-arrow-right"></i>
+				</button>
 				<Input bind:value={chatSearchString} placeholder="Search chats"
 					><i class="bi bi-search"></i></Input
 				>
