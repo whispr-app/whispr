@@ -705,6 +705,7 @@
 				background: none;
 
 				padding: 10px;
+				padding-bottom: 30px;
 
 				display: flex;
 				justify-content: flex-start;
