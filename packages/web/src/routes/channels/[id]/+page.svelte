@@ -545,14 +545,16 @@
 		{:else}
 			<div class="channel">
 				<div class="top-bar">
-					{#if id !== '@self'}
-						<a class="back" href="/channels/@self">
-							<i class="bi bi-arrow-left"></i>
-						</a>
-						{#await libWhispr.getChannel(id)}
+					<a class="back" href="/channels/@self">
+						<i class="bi bi-arrow-left"></i>
+					</a>
+					{#await libWhispr.getChannel(id)}
+						<div class="user">
 							<h2><MockText style="height: 20px; width: 300px;" /></h2>
 							<h3 class="handle"><MockText style="height: 20px; width: 200px;" /></h3>
-						{:then channel}
+						</div>
+					{:then channel}
+						<div class="user">
 							<h2>
 								{channel.userChannelPermissions.length === 2
 									? getUserFromUsers(channel.userChannelPermissions)?.nickname
@@ -565,8 +567,8 @@
 										: channel.name
 								}@${(browser && window.location.hostname) || ''}`}
 							</h3>
-						{/await}
-					{/if}
+						</div>
+					{/await}
 				</div>
 				<div bind:this={chatElement} class="chat">
 					{#each $messages as messageCluster}
@@ -664,6 +666,24 @@
 					i {
 						color: colours.$text-100;
 						scale: 1.5;
+					}
+				}
+
+				.user {
+					display: flex;
+					flex-direction: column;
+
+					h2,
+					h3 {
+						margin: 2px;
+					}
+
+					h2 {
+						font-size: medium;
+					}
+
+					h3 {
+						font-size: small;
 					}
 				}
 			}
