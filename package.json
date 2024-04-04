@@ -8,7 +8,8 @@
     "build:mjs": "esbuild packages/api/dist/index.mjs --bundle --format=esm --platform=node --outfile=dist/bundle.mjs --sourcemap",
     "build:cjs": "esbuild packages/api/dist/index.mjs --bundle --format=cjs --platform=node --outfile=dist/bundle.cjs --sourcemap",
     "prisma:update": "nx run @whispr/api:prisma:update",
-    "start": "node dist/bundle.cjs"
+    "start": "node dist/bundle.cjs",
+    "update": "git pull && pnpm install && pnpm prisma:update && pnpm build && pm2 restart 0"
   },
   "private": true,
   "devDependencies": {
