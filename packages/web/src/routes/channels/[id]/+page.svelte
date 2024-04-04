@@ -485,63 +485,64 @@
 	</div>
 {:else}
 	<div class="mobile">
-		<div class="top">
-			<div class="chats-options">
-				<button on:click={signout} class="profile">
-					<i class="bi bi-box-arrow-right"></i>
-				</button>
-				<Input bind:value={chatSearchString} placeholder="Search chats"
-					><i class="bi bi-search"></i></Input
-				>
-				<button
-					class="new-chat"
-					on:click={() => {
-						createChannelModalOpen = true;
-					}}
-				>
-					<i class="bi bi-pencil"></i>
-				</button>
+		{#if id === '@self'}
+			<div class="top">
+				<div class="chats-options">
+					<button on:click={signout} class="profile">
+						<i class="bi bi-box-arrow-right"></i>
+					</button>
+					<Input bind:value={chatSearchString} placeholder="Search chats"
+						><i class="bi bi-search"></i></Input
+					>
+					<button
+						class="new-chat"
+						on:click={() => {
+							createChannelModalOpen = true;
+						}}
+					>
+						<i class="bi bi-pencil"></i>
+					</button>
+				</div>
 			</div>
-		</div>
-		<div class="chats">
-			{#each $channels as channel}
-				<a href="/channels/{channel.id}">
-					<div>
-						<div class="name-and-time">
-							<h2 class="name">
-								{channel.userChannelPermissions.length === 2
-									? getUserFromUsers(channel.userChannelPermissions)?.nickname
-									: channel.name}
-							</h2>
-							{#if channel.lastMessageId}
-								<h2 class="time" id={`${channel.id}-time`}>
-									{#await libWhispr.getMessage(channel.id, channel.lastMessageId)}
-										<MockText style="height: 20px; width: 40px;" />
-									{:then message}
-										{getTimeSince(new Date(message.createdAt).getTime())}
-									{/await}
+			<div class="chats">
+				{#each $channels as channel}
+					<a href="/channels/{channel.id}">
+						<div>
+							<div class="name-and-time">
+								<h2 class="name">
+									{channel.userChannelPermissions.length === 2
+										? getUserFromUsers(channel.userChannelPermissions)?.nickname
+										: channel.name}
 								</h2>
+								{#if channel.lastMessageId}
+									<h2 class="time" id={`${channel.id}-time`}>
+										{#await libWhispr.getMessage(channel.id, channel.lastMessageId)}
+											<MockText style="height: 20px; width: 40px;" />
+										{:then message}
+											{getTimeSince(new Date(message.createdAt).getTime())}
+										{/await}
+									</h2>
+								{/if}
+							</div>
+							{#if channel.lastMessageId}
+								{#await libWhispr.getMessage(channel.id, channel.lastMessageId) then message}
+									{#await libWhispr.decryptMessageContent(message.content.cipherText, message.author, message.content.encryptedSymmetricKey)}
+										<p id={`${channel.id}-message`}>
+											<MockText style="height: 20px; width: 100px;" />.
+										</p>
+									{:then decryptedMessage}
+										<p id={`${channel.id}-message`}>
+											{`${message.author.nickname}: ${decryptedMessage}`}
+										</p>
+									{/await}
+								{/await}
 							{/if}
 						</div>
-						{#if channel.lastMessageId}
-							{#await libWhispr.getMessage(channel.id, channel.lastMessageId) then message}
-								{#await libWhispr.decryptMessageContent(message.content.cipherText, message.author, message.content.encryptedSymmetricKey)}
-									<p id={`${channel.id}-message`}>
-										<MockText style="height: 20px; width: 100px;" />.
-									</p>
-								{:then decryptedMessage}
-									<p id={`${channel.id}-message`}>
-										{`${message.author.nickname}: ${decryptedMessage}`}
-									</p>
-								{/await}
-							{/await}
-						{/if}
-					</div>
-				</a>
-				<br />
-			{/each}
-		</div>
-		{#if id !== '@self'}
+					</a>
+					<br />
+				{/each}
+			</div>
+		{:else}
 			<div class="channel">
 				<div class="top-bar">
 					{#if id !== '@self'}
@@ -627,7 +628,10 @@
 			top: 0;
 			left: 0;
 
-			overflow-y: scroll;
+			display: flex;
+			flex-direction: column;
+
+			// overflow-y: scroll;
 
 			.top-bar {
 				width: calc(100% - 15px);
@@ -636,9 +640,6 @@
 				border-bottom: 1px solid colours.$outline-100;
 
 				padding-left: 15px;
-
-				position: sticky;
-				top: 0;
 
 				display: flex;
 				justify-content: flex-start;
@@ -682,9 +683,6 @@
 				width: calc(100% - 20px);
 				height: 40px;
 				background: none;
-
-				position: sticky;
-				bottom: 10px;
 
 				padding: 10px;
 
