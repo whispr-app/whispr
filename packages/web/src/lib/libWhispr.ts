@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
+import Cache from './cache';
 
 const ipRegex =
 	/^((((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))|((([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))))(?:\/api(?:\/.*)?)?/iu;
@@ -18,6 +19,9 @@ const url = import.meta.env.DEV
 console.log(import.meta.env);
 
 console.log('api url', url);
+
+const channelCache = new Cache(300000);
+const messageCache = new Cache(300000);
 
 export type LibWhisprOptions = {
 	version: string;
@@ -289,13 +293,29 @@ export class LibWhispr {
 	};
 
 	public getChannels = async () => {
+		if (channelCache.size > 0) {
+			console.log('getChannels: got from cache');
+			console.log(channelCache.values.map((v) => v.value));
+		}
+
+		if (channelCache.size > 0) return channelCache.values.map((v) => v.value);
 		const response = await axios.get(this.constructHttpUrl('users/@self/channels'));
+
+		if (response.status === 200) {
+			response.data.forEach((channel: { id: string }) => {
+				channelCache.set(channel.id, channel);
+			});
+		}
 
 		return response.data;
 	};
 
 	public getChannel = async (channelId: string) => {
 		const response = await axios.get(this.constructHttpUrl(`channels/${channelId}`));
+
+		if (response.status === 200) {
+			channelCache.set(response.data.id, response.data);
+		}
 
 		return response.data;
 	};
@@ -305,21 +325,61 @@ export class LibWhispr {
 			recipients
 		});
 
+		if (response.status === 201) {
+			channelCache.set(response.data.id, response.data);
+		}
+
 		return response.data;
 	};
 
 	public getMessage = async (channelId: string, messageId: string) => {
+		if (messageCache.has(messageId)) {
+			console.log('getMessage: got from cache');
+			console.log(messageCache.get(messageId));
+		}
+
+		if (messageCache.has(messageId)) return messageCache.get(messageId);
 		const response = await axios.get(
 			this.constructHttpUrl(`channels/${channelId}/messages/${messageId}`)
 		);
+
+		if (response.status === 201) {
+			messageCache.set(messageId, response.data);
+		}
 
 		return response.data;
 	};
 
 	public fetchMessages = async (channelId: string, page: number = 1) => {
+		if (messageCache.size > 0) {
+			console.log('fetchMessages: got from cache');
+			console.log(messageCache.values.map((v) => v.value));
+		}
+
+		if (messageCache.size > 0) {
+			const values = messageCache.values
+				.map((v) => {
+					console.log(v.value);
+					return v.value;
+				})
+				.filter((v) => (v as { createdAt: string; channelId: string }).channelId === channelId) as {
+				createdAt: string;
+				channelId: string;
+			}[];
+			values.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+			return values;
+		}
+
 		const response = await axios.get(
 			this.constructHttpUrl(`channels/${channelId}/messages?page=${page}`)
 		);
+
+		if (response.status === 200) {
+			response.data.forEach((message: { id: string; channelId: string }) => {
+				message.channelId = channelId;
+				messageCache.set(message.id, message);
+			});
+		}
 
 		return response.data;
 	};
@@ -378,7 +438,7 @@ export class LibWhispr {
 
 		const symmetricKey = await this.generateSymmetricKey();
 
-		await axios.post(this.constructHttpUrl(`channels/${channelId}/messages`), {
+		const response = await axios.post(this.constructHttpUrl(`channels/${channelId}/messages`), {
 			content: [
 				{
 					target: user.id,
@@ -400,6 +460,10 @@ export class LibWhispr {
 				}
 			]
 		});
+
+		if (response.status === 201) {
+			messageCache.set(response.data.id, response.data);
+		}
 	};
 
 	public decryptMessageContent = async (
@@ -414,6 +478,7 @@ export class LibWhispr {
 		},
 		encryptedSymmetricKey: string
 	): Promise<string> => {
+		if (!cipher) return '';
 		const [encryptedContent, iv] = cipher.split(':');
 		const symmetricKey = await this.deriveSymmetricKey(
 			encryptedSymmetricKey,

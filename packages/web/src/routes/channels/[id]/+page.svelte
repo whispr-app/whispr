@@ -39,6 +39,18 @@
 
 	$: id = data.slug;
 
+	const getLastMessageContent = async (channelId: string, messageId: string) => {
+		const msg = await libWhispr.getMessage(channelId, messageId);
+		const content = await libWhispr.decryptMessageContent(
+			msg.content.cipherText,
+			msg.author,
+			msg.content.encryptedSymmetricKey
+		);
+
+		if (content) msg.content = content;
+		return msg;
+	};
+
 	const getUserFromUsers = (
 		users: {
 			user: {
@@ -171,13 +183,13 @@
 
 	const stream = gateway.streamWritable;
 
-	let message = '';
+	let userMessage = '';
 
 	const sendMessage = async () => {
-		if (!message) return;
-		if (message.length > 2000) return;
-		await libWhispr.sendMessage(id, message);
-		message = '';
+		if (!userMessage) return;
+		if (userMessage.length > 2000) return;
+		await libWhispr.sendMessage(id, userMessage);
+		userMessage = '';
 	};
 
 	$: {
@@ -195,7 +207,7 @@
 							msg.content.encryptedSymmetricKey
 						);
 
-						msg.content = content;
+						if (content) msg.content = content;
 
 						const lastMessageCluster = _messages[0];
 
@@ -239,11 +251,13 @@
 							encryptedSymmetricKey: string;
 						}) => content.targetUserId === $authedUser?.userId
 					);
-					parsed.d.content = await libWhispr.decryptMessageContent(
+					const content = await libWhispr.decryptMessageContent(
 						parsed.d.content.cipherText,
 						parsed.d.author,
 						parsed.d.content.encryptedSymmetricKey
 					);
+
+					if (content) parsed.d.content = content;
 
 					const message = parsed.d as Message;
 
@@ -413,16 +427,14 @@
 								{/if}
 							</div>
 							{#if channel.lastMessageId}
-								{#await libWhispr.getMessage(channel.id, channel.lastMessageId) then message}
-									{#await libWhispr.decryptMessageContent(message.content.cipherText, message.author, message.content.encryptedSymmetricKey)}
-										<p id={`${channel.id}-message`}>
-											<MockText style="height: 20px; width: 100px;" />.
-										</p>
-									{:then decryptedMessage}
-										<p id={`${channel.id}-message`}>
-											{`${message.author.nickname}: ${decryptedMessage}`}
-										</p>
-									{/await}
+								{#await getLastMessageContent(channel.id, channel.lastMessageId)}
+									<p id={`${channel.id}-message`}>
+										<MockText style="height: 20px; width: 100px;" />.
+									</p>
+								{:then message}
+									<p id={`${channel.id}-message`}>
+										{`${message.author.nickname}: ${message.content}`}
+									</p>
 								{/await}
 							{/if}
 						</div>
@@ -483,7 +495,7 @@
 						<form on:submit|preventDefault={sendMessage}>
 							<Input
 								type="text"
-								bind:value={message}
+								bind:value={userMessage}
 								autocomplete="false"
 								placeholder={`Message ${
 									channel.userChannelPermissions.length === 2
@@ -544,16 +556,14 @@
 								{/if}
 							</div>
 							{#if channel.lastMessageId}
-								{#await libWhispr.getMessage(channel.id, channel.lastMessageId) then message}
-									{#await libWhispr.decryptMessageContent(message.content.cipherText, message.author, message.content.encryptedSymmetricKey)}
-										<p id={`${channel.id}-message`}>
-											<MockText style="height: 20px; width: 100px;" />.
-										</p>
-									{:then decryptedMessage}
-										<p id={`${channel.id}-message`}>
-											{`${message.author.nickname}: ${decryptedMessage}`}
-										</p>
-									{/await}
+								{#await getLastMessageContent(channel.id, channel.lastMessageId)}
+									<p id={`${channel.id}-message`}>
+										<MockText style="height: 20px; width: 100px;" />.
+									</p>
+								{:then message}
+									<p id={`${channel.id}-message`}>
+										{`${message.author.nickname}: ${message.content}`}
+									</p>
 								{/await}
 							{/if}
 						</div>
@@ -612,7 +622,7 @@
 							<form on:submit|preventDefault={sendMessage}>
 								<Input
 									type="text"
-									bind:value={message}
+									bind:value={userMessage}
 									autocomplete="false"
 									placeholder={`Message ${
 										channel.userChannelPermissions.length === 2
