@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"author": "Morgan Dilling",
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "node ./scripts/viteDevStripArgs.mjs",
 		"build": "vite build && node ./scripts/postprocess.mjs",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
