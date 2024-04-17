@@ -94,6 +94,32 @@ export class LibWhispr {
 		}
 	};
 
+	public fetchKeys = async () => {
+		if (!this.authStore) return;
+		try {
+			return await axios.get(this.constructHttpUrl('admin/fetch-keys'), {
+				headers: {
+					Authorization: `Bearer ${this.authStore.token}`
+				}
+			});
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	public deleteKey = async (key: string) => {
+		if (!this.authStore) return;
+		try {
+			return await axios.delete(this.constructHttpUrl(`admin/delete-key/${key}`), {
+				headers: {
+					Authorization: `Bearer ${this.authStore.token}`
+				}
+			});
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
 	public register = async (
 		password: string,
 		nickname: string,
