@@ -120,6 +120,40 @@ export class LibWhispr {
 		}
 	};
 
+	public banUser = async (username: string) => {
+		if (!this.authStore) return;
+		try {
+			return await axios.post(
+				this.constructHttpUrl(`admin/ban-user/${username}`),
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${this.authStore.token}`
+					}
+				}
+			);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	public unbanUser = async (username: string) => {
+		if (!this.authStore) return;
+		try {
+			return await axios.post(
+				this.constructHttpUrl(`admin/unban-user/${username}`),
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${this.authStore.token}`
+					}
+				}
+			);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
 	public register = async (
 		password: string,
 		nickname: string,
@@ -224,6 +258,8 @@ export class LibWhispr {
 
 	public getUser = async (username: string) => {
 		const response = await axios.get(this.constructHttpUrl(`users/get-user/${username}`));
+
+		console.log(response);
 
 		return response.data;
 	};

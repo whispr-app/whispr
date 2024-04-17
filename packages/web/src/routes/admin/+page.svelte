@@ -65,6 +65,28 @@
 
 		fetchKeys();
 	};
+
+	let username: string;
+	let userResponseMessage: string = '';
+	const banUser = async () => {
+		const response = await libWhispr.banUser(username).catch();
+		if (!response) return;
+
+		if (response.status === 200) userResponseMessage = 'User banned';
+		else userResponseMessage = response.data.message;
+
+		console.log(response.data);
+	};
+
+	const unbanUser = async () => {
+		const response = await libWhispr.unbanUser(username).catch();
+		if (!response) return;
+
+		if (response.status === 200) userResponseMessage = 'User unbanned';
+		else userResponseMessage = response.data.message;
+
+		console.log(response.data);
+	};
 </script>
 
 <main>
@@ -137,10 +159,23 @@
 			</tbody>
 		</table>
 	{/if}
+
+	<h2>Users</h2>
+	<form on:submit|preventDefault>
+		<label for="username">Username</label>
+		<input bind:value={username} id="username" type="text" />
+		<button on:click={banUser} type="submit" class="danger m10px">Ban</button>
+		<button on:click={unbanUser} type="submit" class="danger m10px">Unban</button>
+	</form>
+	<p>{userResponseMessage}</p>
 </main>
 
 <style lang="scss">
 	@use 'lib/styles/colours' as colours;
+
+	.m10px {
+		margin: 10px;
+	}
 
 	.danger {
 		color: colours.$error-100;

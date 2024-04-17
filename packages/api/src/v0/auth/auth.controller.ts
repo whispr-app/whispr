@@ -5,6 +5,7 @@ import { AppError } from '@lib/exceptions';
 import { generateUserToken, isPasswordValid } from './auth.service';
 import { getUser } from 'v0/users/users.service';
 import { verifyToken } from '@lib/tokens';
+import * as authService from './auth.service';
 
 export const signin: RequestHandler = async (
   req: Request<unknown, unknown, SigninSchema>,
@@ -23,6 +24,15 @@ export const signin: RequestHandler = async (
 
   if (!passwordValid) {
     return next(new AppError('validation', 'Incorrect password'));
+  }
+
+  if (user.banned) {
+    return next(
+      new AppError(
+        'validation',
+        "User is banned. If you believe this is a mistake, please contact the host instance's admin."
+      )
+    );
   }
 
   // TODO: Change to refresh once MVP is done
@@ -51,11 +61,7 @@ export const signout: RequestHandler = async (
   const token = await verifyToken(req.session.token);
 
   try {
-    await prisma.token.delete({
-      where: {
-        jti: token.payload.jti,
-      },
-    });
+    await authService.signout(token.payload.jti);
   } catch (e) {
     console.log(e);
     res.status(500).send();
@@ -74,11 +80,7 @@ export const signoutAll: RequestHandler = async (
   }
 
   try {
-    await prisma.token.deleteMany({
-      where: {
-        userId: req.session.userId,
-      },
-    });
+    await authService.signoutAll(req.session.userId);
   } catch (e) {
     console.log(e);
     res.status(500).send();

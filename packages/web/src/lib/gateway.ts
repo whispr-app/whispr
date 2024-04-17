@@ -1,5 +1,5 @@
 import { writable, type Writable } from 'svelte/store';
-import { OpCode } from '@whispr/types';
+import { GatewayServerEvent, OpCode } from '@whispr/types';
 import { libWhispr } from './libWhispr';
 import { browser } from '$app/environment';
 
@@ -71,7 +71,7 @@ export class Gateway {
 			this.stream.unshift(msg);
 			this.streamWritable.set(this.stream);
 
-			const { op, d } = JSON.parse(msg.data);
+			const { op, d, t } = JSON.parse(msg.data);
 
 			switch (op) {
 				case OpCode.Hello: {
@@ -90,6 +90,13 @@ export class Gateway {
 					break;
 				}
 				case OpCode.Dispatch: {
+					break;
+				}
+				case OpCode.Notification: {
+					if (t === GatewayServerEvent.SignOut) {
+						libWhispr.signout();
+						location.reload();
+					}
 					break;
 				}
 			}

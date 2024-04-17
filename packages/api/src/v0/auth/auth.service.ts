@@ -1,6 +1,30 @@
 import { domain } from '@lib/argvHandler';
+import prisma from '@lib/prisma';
 import { generateToken } from '@lib/tokens';
+import { GatewayServerEvent } from '@whispr/types';
 import { randomBytes, pbkdf2, BinaryLike } from 'crypto';
+import { notifications } from 'v0/gateway/gateway.service';
+
+export const signoutAll = async (userId: string) => {
+  await prisma.token.deleteMany({
+    where: {
+      userId,
+    },
+  });
+
+  notifications.fire(GatewayServerEvent.SignOut, {
+    targetIds: [userId],
+    data: {},
+  });
+};
+
+export const signout = async (token: string) => {
+  await prisma.token.delete({
+    where: {
+      jti: token,
+    },
+  });
+};
 
 /**
  *

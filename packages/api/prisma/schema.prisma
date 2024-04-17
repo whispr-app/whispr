@@ -24,6 +24,7 @@ model User {
   keyPair  KeyPair?
   messages Message[]
   role     Role      @default(USER)
+  banned   Boolean   @default(false)
 
   userChannelPermissions UserChannelPermissions[]
   AccessKey              AccessKey?               @relation(fields: [accessKeyId], references: [id])
