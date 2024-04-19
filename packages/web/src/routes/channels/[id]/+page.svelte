@@ -12,6 +12,7 @@
 	import Message from '$lib/components/Message.svelte';
 	import MockText from '$lib/components/MockText.svelte';
 	import Profile from '$lib/components/Profile.svelte';
+	import Settings from '$lib/components/Settings.svelte';
 
 	$: mobile = navigator.userAgent.match(/Mobi/);
 
@@ -310,6 +311,9 @@
 			return `${Math.floor(diff / 31557600000)}y`;
 		}
 	};
+
+	// Settings
+	let settingsOpen = false;
 </script>
 
 <svelte:head>
@@ -356,11 +360,12 @@
 {/if}
 
 {#if !mobile}
+	<Settings open={settingsOpen} on:close={() => (settingsOpen = false)}></Settings>
 	<div class="top">
 		<div class="side-bar">
 			<div class="options">
 				<Profile nickname={$authedUser?.username} status={'online'}></Profile>
-				<button on:click={() => {}} class="button-bg">
+				<button on:click={() => (settingsOpen = true)} class="button-bg">
 					<i class="bi bi-gear-wide-connected"></i>
 					<!-- <i class="bi bi-box-arrow-right"></i> -->
 				</button>
@@ -934,6 +939,10 @@
 
 					i {
 						color: colours.$text-100;
+					}
+
+					&:hover {
+						background-color: colours.$button-hover-100;
 					}
 				}
 

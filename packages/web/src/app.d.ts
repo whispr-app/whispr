@@ -8,6 +8,16 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	declare const PKG: {
+		name: string;
+		version: string;
+	};
+
+	declare const GIT_HASH: {
+		full: string;
+		short: string;
+	};
 }
 
 export {};
