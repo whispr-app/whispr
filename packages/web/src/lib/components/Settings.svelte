@@ -60,7 +60,9 @@
 			<button on:click={() => (settingPage = 'keybinds')}>Keybinds</button>
 			<h2>Extra</h2>
 			<button on:click={() => (settingPage = 'change_log')}>Change Log</button>
-			<button on:click={signout}>Log out <span><i class="bi bi-box-arrow-right"></i></span></button>
+			<button class="danger" on:click={signout}
+				>Log Out <span><i class="bi bi-box-arrow-right"></i></span></button
+			>
 			<hr />
 			<a target="_blank" href="https://github.com/whispr-app/whispr/commit/{gitHash.full}"
 				>v{version} ({gitHash.short})</a
@@ -77,6 +79,13 @@
 	@use 'lib/styles/colours.scss' as colours;
 	@use 'lib/styles/zIndexes.scss' as zIndexes;
 	@use 'lib/styles/textSize.scss' as textSize;
+
+	.danger {
+		transition: color 0.2s;
+		&:hover {
+			color: colours.$error-100;
+		}
+	}
 
 	.close {
 		position: absolute;
