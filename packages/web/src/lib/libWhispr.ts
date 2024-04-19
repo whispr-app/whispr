@@ -599,7 +599,7 @@ export class LibWhispr {
 }
 
 export const libWhispr = new LibWhispr(url, {
-	version: 'v0',
+	version: `v${PKG.version.split('.').slice(0, 1).join('.')}`,
 	secure: url.includes('localhost') || ipRegex.test(url) ? false : import.meta.env.PROD
 });
 
