@@ -60,6 +60,10 @@ export class LibWhispr {
 		this.connectionUrl = connectionUrl;
 	};
 
+	public generateProfilePictureUrl = async (nickname: string) => {
+		return `https://ui-avatars.com/api/?name=${nickname.charAt(0)}&background=ffffff&color=7d8590&length=1&size=256&bold=true`;
+	};
+
 	public isAuthorised = async () => {
 		if (!this.authStore) return false;
 		try {

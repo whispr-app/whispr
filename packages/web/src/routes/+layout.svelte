@@ -142,38 +142,6 @@
 		}
 	}
 
-	.no-mobile {
-		z-index: 1000000;
-		position: fixed;
-		top: 0;
-		left: 0;
-		display: block;
-		width: 100vw;
-		height: 100vh;
-		background-image: url('/wave.svg');
-		background-size: cover;
-		background-color: colours.$background-100;
-		background-repeat: no-repeat;
-		padding: 2rem;
-
-		h1 {
-			word-break: break-word;
-			font-size: 2rem;
-			padding: 0;
-			margin: 0;
-		}
-
-		* {
-			max-width: 300px;
-		}
-	}
-
-	@media (min-width: 768px) {
-		.no-mobile {
-			display: none !important;
-		}
-	}
-
 	:global(button) {
 		display: flex;
 		justify-content: center;

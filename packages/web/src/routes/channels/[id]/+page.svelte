@@ -11,6 +11,7 @@
 	import Input from '$lib/components/Input.svelte';
 	import Message from '$lib/components/Message.svelte';
 	import MockText from '$lib/components/MockText.svelte';
+	import Profile from '$lib/components/Profile.svelte';
 
 	$: mobile = navigator.userAgent.match(/Mobi/);
 
@@ -358,9 +359,10 @@
 	<div class="top">
 		<div class="side-bar">
 			<div class="options">
-				<button on:click={signout} class="profile">
-					<!-- <i class="bi bi-person"></i> -->
-					<i class="bi bi-box-arrow-right"></i>
+				<Profile nickname={$authedUser?.username} status={'online'}></Profile>
+				<button on:click={() => {}} class="button-bg">
+					<i class="bi bi-gear-wide-connected"></i>
+					<!-- <i class="bi bi-box-arrow-right"></i> -->
 				</button>
 				<!-- <button>
 				<i class="bi bi-gear"></i>
@@ -382,7 +384,13 @@
 			<div class="chats">
 				{#each $channels as channel}
 					<a href="/channels/{channel.id}">
-						<div>
+						{#if channel.userChannelPermissions.length === 2}
+							<Profile
+								nickname={getUserFromUsers(channel.userChannelPermissions)?.username}
+								status={'online'}
+							></Profile>
+						{/if}
+						<div class="chat-content">
 							<div class="name-and-time">
 								<h2 class="name">
 									{channel.userChannelPermissions.length === 2
@@ -426,6 +434,12 @@
 						<h2><MockText style="height: 20px; width: 300px;" /></h2>
 						<h3 class="handle"><MockText style="height: 20px; width: 200px;" /></h3>
 					{:then channel}
+						{#if channel.userChannelPermissions.length === 2}
+							<Profile
+								nickname={getUserFromUsers(channel.userChannelPermissions)?.username}
+								status={'online'}
+							></Profile>
+						{/if}
 						<h2>
 							{channel.userChannelPermissions.length === 2
 								? getUserFromUsers(channel.userChannelPermissions)?.nickname
@@ -777,7 +791,7 @@
 				}
 
 				display: flex;
-				flex-direction: column;
+				flex-direction: row;
 				justify-content: center;
 				align-items: flex-start;
 
@@ -787,39 +801,48 @@
 					width: 100%;
 				}
 
-				p {
-					margin: 0;
-					margin-top: 3px;
-					color: colours.$text-secondary-100;
-
-					text-overflow: ellipsis;
-					overflow: hidden;
-					white-space: nowrap;
-				}
-
-				.name-and-time {
+				.chat-content {
 					display: flex;
-					justify-content: space-between;
-					align-items: center;
-					width: 100%;
+					flex-direction: column;
+					justify-content: center;
+					align-items: flex-start;
 
-					h2 {
+					p {
 						margin: 0;
-					}
-
-					.name {
-						max-width: 300px;
-						overflow: hidden;
-						text-overflow: ellipsis;
-					}
-
-					.time {
+						margin-top: 3px;
 						color: colours.$text-secondary-100;
-						width: 100px;
-						right: 0;
-						text-align: right;
+
+						text-overflow: ellipsis;
+						overflow: hidden;
+						white-space: nowrap;
+					}
+
+					.name-and-time {
 						display: flex;
-						justify-content: flex-end;
+						justify-content: space-between;
+						align-items: center;
+						width: 100%;
+
+						h2 {
+							margin: 0;
+						}
+
+						.name {
+							max-width: 300px;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							font-size: textSize.$medium;
+						}
+
+						.time {
+							color: colours.$text-secondary-100;
+							width: 100px;
+							right: 0;
+							text-align: right;
+							display: flex;
+							justify-content: flex-end;
+							font-size: textSize.$medium;
+						}
 					}
 				}
 			}
@@ -896,7 +919,7 @@
 
 			.options {
 				width: calc(100% - 30px);
-				height: 50px;
+				height: 40px;
 				background: none;
 				padding: 10px;
 				padding-right: 0px;
@@ -905,9 +928,9 @@
 				align-items: center;
 				gap: 10px;
 
-				.profile {
+				.button-bg {
 					border-radius: 50%;
-					background-color: colours.$background-100;
+					background-color: colours.$button-100;
 
 					i {
 						color: colours.$text-100;
@@ -915,8 +938,8 @@
 				}
 
 				button {
-					width: 45px;
-					height: 45px;
+					aspect-ratio: 1;
+					height: 100%;
 					background: none;
 					border: none;
 					outline: none;
@@ -972,49 +995,57 @@
 					}
 
 					display: flex;
-					flex-direction: column;
-					justify-content: center;
-					align-items: flex-start;
+					flex-direction: row;
+					justify-content: flex-start;
+					align-items: center;
 
 					padding: 10px;
+					gap: 10px;
 
 					div {
 						width: 100%;
 					}
 
-					p {
-						margin: 0;
-						margin-top: 3px;
-						color: colours.$text-secondary-100;
-
-						text-overflow: ellipsis;
-						overflow: hidden;
-						white-space: nowrap;
-					}
-
-					.name-and-time {
+					.chat-content {
 						display: flex;
-						justify-content: space-between;
-						align-items: center;
-						width: 100%;
-
-						h2 {
+						flex-direction: column;
+						justify-content: center;
+						align-items: flex-start;
+						p {
 							margin: 0;
-						}
-
-						.name {
-							max-width: 300px;
-							overflow: hidden;
-							text-overflow: ellipsis;
-						}
-
-						.time {
+							margin-top: 3px;
 							color: colours.$text-secondary-100;
-							width: 100px;
-							right: 0;
-							text-align: right;
+
+							text-overflow: ellipsis;
+							overflow: hidden;
+							white-space: nowrap;
+						}
+
+						.name-and-time {
 							display: flex;
-							justify-content: flex-end;
+							justify-content: space-between;
+							align-items: center;
+							width: 100%;
+
+							h2 {
+								margin: 0;
+							}
+
+							.name {
+								max-width: 150px;
+								overflow: hidden;
+								text-overflow: ellipsis;
+								font-size: textSize.$medium;
+							}
+
+							.time {
+								color: colours.$text-secondary-100;
+								right: 0;
+								text-align: right;
+								display: flex;
+								justify-content: flex-end;
+								font-size: textSize.$medium;
+							}
 						}
 					}
 				}
