@@ -1020,6 +1020,7 @@
 						flex-direction: column;
 						justify-content: center;
 						align-items: flex-start;
+
 						p {
 							margin: 0;
 							margin-top: 3px;
@@ -1028,6 +1029,7 @@
 							text-overflow: ellipsis;
 							overflow: hidden;
 							white-space: nowrap;
+							max-width: 200px;
 						}
 
 						.name-and-time {
