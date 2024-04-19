@@ -148,6 +148,7 @@
 		align-items: center;
 		padding: 0.5rem;
 
+		font-weight: 500;
 		font-size: large;
 		width: fit-content;
 
@@ -167,5 +168,28 @@
 			opacity: 0.5;
 			cursor: not-allowed;
 		}
+	}
+
+	:global(.button-primary) {
+		color: colours.$text-100;
+		background-color: colours.$primary-100;
+		border: 1px solid colours.$primary-100;
+
+		&:hover {
+			border: 1px solid colours.$text-100;
+		}
+	}
+
+	:global(.button-danger) {
+		color: colours.$error-100;
+		background-color: colours.$background-secondary-100;
+
+		&:hover {
+			border: 1px solid colours.$error-100;
+		}
+	}
+
+	:global(.text-secondary) {
+		color: colours.$text-secondary-100;
 	}
 </style>
