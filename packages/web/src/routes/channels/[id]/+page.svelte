@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { libWhispr, authedUser } from '$lib/libWhispr.js';
+	import { libWhispr, authedUser, messageCache } from '$lib/libWhispr.js';
 	import axios from 'axios';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
@@ -15,8 +15,6 @@
 	import Settings from '$lib/components/Settings.svelte';
 
 	$: mobile = navigator.userAgent.match(/Mobi/);
-
-	let chatElement: HTMLElement | null = null;
 
 	let chatSearchString = '';
 
@@ -105,6 +103,7 @@
 		id: string;
 		name: string | null;
 		lastMessageId: string | null;
+		lastMessage: Message | null;
 		userChannelPermissions: {
 			user: {
 				id: string;
@@ -120,7 +119,9 @@
 	const sortChannels = async (channels: Channel[]): Promise<Channel[]> => {
 		const lastMessageTimes = new Map<string, number>();
 		for (const channel of channels) {
-			if (channel.lastMessageId) {
+			if (channel.lastMessage) {
+				lastMessageTimes.set(channel.id, new Date(channel.lastMessage.createdAt).getTime());
+			} else if (channel.lastMessageId) {
 				const message = await libWhispr.getMessage(channel.id, channel.lastMessageId);
 				lastMessageTimes.set(channel.id, new Date(message.createdAt).getTime());
 			}
@@ -153,6 +154,24 @@
 			response = await sortChannels(response);
 
 			for (const channel of response) {
+				console.log('channel:', channel.id);
+
+				if (!channel.lastMessage && channel.lastMessageId) {
+					const message = await libWhispr.getMessage(channel.id, channel.lastMessageId);
+
+					const content = await libWhispr.decryptMessageContent(
+						message.content.cipherText,
+						message.author,
+						message.content.encryptedSymmetricKey
+					);
+
+					if (content) message.content = content;
+
+					console.log('channel update, message:', message);
+
+					channel.lastMessage = message;
+				}
+
 				_channels.push(channel);
 				channels.set(_channels);
 			}
@@ -197,38 +216,32 @@
 		messages.set(_messages);
 
 		if (mounted && id !== '@self') {
-			libWhispr
-				.fetchMessages(id)
-				.then(async (response) => {
-					for (const msg of response.reverse()) {
-						const content = await libWhispr.decryptMessageContent(
-							msg.content.cipherText,
-							msg.author,
-							msg.content.encryptedSymmetricKey
-						);
+			libWhispr.fetchMessages(id).then(async (response) => {
+				for (const msg of response.reverse()) {
+					const content = await libWhispr.decryptMessageContent(
+						msg.content.cipherText,
+						msg.author,
+						msg.content.encryptedSymmetricKey
+					);
 
-						if (content) msg.content = content;
+					if (content) msg.content = content;
 
-						const lastMessageCluster = _messages[0];
+					const lastMessageCluster = _messages[0];
 
-						if (
-							lastMessageCluster &&
-							lastMessageCluster[0].author.id === msg.author.id &&
-							new Date(msg.createdAt).getTime() -
-								new Date(lastMessageCluster[0].createdAt).getTime() <
-								300000
-						) {
-							lastMessageCluster.unshift(msg);
-						} else {
-							_messages.unshift([msg]);
-						}
+					if (
+						lastMessageCluster &&
+						lastMessageCluster[0].author.id === msg.author.id &&
+						new Date(msg.createdAt).getTime() -
+							new Date(lastMessageCluster[0].createdAt).getTime() <
+							300000
+					) {
+						lastMessageCluster.unshift(msg);
+					} else {
+						_messages.unshift([msg]);
 					}
-					messages.set(_messages);
-				})
-				.then(() => {
-					chatElement?.scrollTo(0, chatElement.scrollHeight);
-					console.log(chatElement?.scrollHeight, chatElement?.scrollTop);
-				});
+				}
+				messages.set(_messages);
+			});
 		}
 	}
 
@@ -281,9 +294,14 @@
 					const channel = _channels.find((channel) => channel.id === message.channelId);
 					if (channel) {
 						channel.lastMessageId = message.id;
+						channel.lastMessage = message;
+						console.log('noticiation get, setting lastMessage');
+
+						messageCache.getCache(channel.id).set(message.id, message);
 						_channels = await sortChannels(_channels);
 						channels.set(_channels);
 					}
+
 					break;
 				}
 				case GatewayServerEvent.ChannelCreate: {
@@ -416,7 +434,11 @@
 										? getUserFromUsers(channel.userChannelPermissions)?.nickname
 										: channel.name}
 								</h2>
-								{#if channel.lastMessageId}
+								{#if channel.lastMessage}
+									<h2 class="time" id={`${channel.id}-time`}>
+										{getTimeSince(new Date(channel.lastMessage.createdAt).getTime())}
+									</h2>
+								{:else if channel.lastMessageId}
 									<h2 class="time" id={`${channel.id}-time`}>
 										{#await libWhispr.getMessage(channel.id, channel.lastMessageId)}
 											<MockText style="height: 20px; width: 40px;" />
@@ -426,13 +448,20 @@
 									</h2>
 								{/if}
 							</div>
-							{#if channel.lastMessageId}
+							{#if channel.lastMessage}
+								<p style="display: none;">
+									{console.log(channel.lastMessage, 'UPDATING CHANNEL RENDER')}
+								</p>
+								<p id={`${channel.id}-message`}>
+									{`${channel.lastMessage.author.nickname}: ${channel.lastMessage.content}`}
+								</p>
+							{:else if channel.lastMessageId}
 								{#await getLastMessageContent(channel.id, channel.lastMessageId)}
 									<p id={`${channel.id}-message`}>
 										<MockText style="height: 20px; width: 100px;" />.
 									</p>
 								{:then message}
-									<p id={`${channel.id}-message`}>
+									<p id={`${channel.id}-message`} data-test="lastMessageId">
 										{`${message.author.nickname}: ${message.content}`}
 									</p>
 								{/await}
@@ -599,7 +628,7 @@
 						</div>
 					{/await}
 				</div>
-				<div bind:this={chatElement} class="chat">
+				<div class="chat">
 					{#each $messages as messageCluster}
 						<!-- profileUrl={messageCluster[messageCluster.length - 1].author.avatar} -->
 						<Message
@@ -921,6 +950,7 @@
 		justify-content: center;
 
 		.side-bar {
+			min-width: 300px;
 			width: 300px;
 			height: 100vh;
 			background-color: colours.$background-secondary-100;

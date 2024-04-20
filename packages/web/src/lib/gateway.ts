@@ -93,9 +93,12 @@ export class Gateway {
 					break;
 				}
 				case OpCode.Notification: {
-					if (t === GatewayServerEvent.SignOut) {
-						libWhispr.signout();
-						location.reload();
+					switch (t) {
+						case GatewayServerEvent.SignOut: {
+							libWhispr.signout();
+							location.reload();
+							break;
+						}
 					}
 					break;
 				}

@@ -4,24 +4,20 @@ import axios from 'axios';
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import Cache from './cache';
+import ChannelCache from './channelCache';
 
 const ipRegex =
 	/^((((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))|((([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))))(?:\/api(?:\/.*)?)?/iu;
 
 const port =
 	import.meta.env.VITE_API_PORT !== 'undefined' ? import.meta.env.VITE_API_PORT : '28980';
-console.log('port', port);
 
 const url = import.meta.env.DEV
 	? `localhost:${port}`
 	: `${typeof window !== 'undefined' ? window.location.host : ''}/api`;
 
-console.log(import.meta.env);
-
-console.log('api url', url);
-
-const channelCache = new Cache(300000);
-const messageCache = new Cache(300000);
+export const channelCache = new Cache(300000);
+export const messageCache = new ChannelCache(300000);
 
 export type LibWhisprOptions = {
 	version: string;
@@ -287,17 +283,10 @@ export class LibWhispr {
 	public getUser = async (username: string) => {
 		const response = await axios.get(this.constructHttpUrl(`users/get-user/${username}`));
 
-		console.log(response);
-
 		return response.data;
 	};
 
 	public getChannels = async () => {
-		if (channelCache.size > 0) {
-			console.log('getChannels: got from cache');
-			console.log(channelCache.values.map((v) => v.value));
-		}
-
 		if (channelCache.size > 0) return channelCache.values.map((v) => v.value);
 		const response = await axios.get(this.constructHttpUrl('users/@self/channels'));
 
@@ -333,33 +322,24 @@ export class LibWhispr {
 	};
 
 	public getMessage = async (channelId: string, messageId: string) => {
-		if (messageCache.has(messageId)) {
-			console.log('getMessage: got from cache');
-			console.log(messageCache.get(messageId));
-		}
-
-		if (messageCache.has(messageId)) return messageCache.get(messageId);
+		if (messageCache.getCache(channelId).has(messageId))
+			return messageCache.getCache(channelId).get(messageId);
 		const response = await axios.get(
 			this.constructHttpUrl(`channels/${channelId}/messages/${messageId}`)
 		);
 
 		if (response.status === 201) {
-			messageCache.set(messageId, response.data);
+			messageCache.getCache(channelId).set(messageId, response.data);
 		}
 
 		return response.data;
 	};
 
 	public fetchMessages = async (channelId: string, page: number = 1) => {
-		if (messageCache.size > 0) {
-			console.log('fetchMessages: got from cache');
-			console.log(messageCache.values.map((v) => v.value));
-		}
-
-		if (messageCache.size > 0) {
-			const values = messageCache.values
-				.map((v) => {
-					console.log(v.value);
+		if (messageCache.getCache(channelId).size > 0) {
+			const values = messageCache
+				.getCache(channelId)
+				.values.map((v) => {
 					return v.value;
 				})
 				.filter((v) => (v as { createdAt: string; channelId: string }).channelId === channelId) as {
@@ -377,7 +357,7 @@ export class LibWhispr {
 		if (response.status === 200) {
 			response.data.forEach((message: { id: string; channelId: string }) => {
 				message.channelId = channelId;
-				messageCache.set(message.id, message);
+				messageCache.getCache(channelId).set(message.id, message);
 			});
 		}
 
@@ -462,7 +442,7 @@ export class LibWhispr {
 		});
 
 		if (response.status === 201) {
-			messageCache.set(response.data.id, response.data);
+			messageCache.getCache(channelId).set(response.data.id, response.data);
 		}
 	};
 
