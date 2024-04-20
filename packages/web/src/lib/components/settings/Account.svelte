@@ -36,8 +36,8 @@
 	>Delete account</button
 >
 <p class="text-secondary">
-	This is irreversible. After deleting your account, any associated data with your account will be
-	removed as soon as possible.
+	This action is instant and irreversible. After deleting your account, any associated data with
+	your account will be removed as soon as possible.
 </p>
 
 <style lang="scss">
