@@ -6,6 +6,10 @@
 	import AnchorButton from '$lib/components/AnchorButton.svelte';
 	import WhisprLogoWhite from '$lib/components/whispr-logo-white.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+
+	import { browser } from '$app/environment';
+
+	let dismissedWarning = Boolean(browser && localStorage.getItem('dismissedWarning'));
 </script>
 
 <svelte:head>
@@ -13,12 +17,22 @@
 </svelte:head>
 
 <Header />
-<div class="warning">
-	⚠️ WARNING! Whispr is currently in development and very much in an unfinished state. Data is
-	subject to be wiped and you shouldn't rely on this for secure communication yet.
-</div>
+{#if !dismissedWarning}
+	<div class="warning">
+		⚠️ WARNING! Whispr is currently in development and very much in an unfinished state. Data is
+		subject to be wiped and you shouldn't rely on this for secure communication yet.
+		<span>
+			<button
+				on:click={() => {
+					localStorage.setItem('dismissedWarning', 'true');
+					dismissedWarning = true;
+				}}><i class="bi bi-x-lg"></i></button
+			>
+		</span>
+	</div>
+{/if}
 <section>
-	<h1>Privacy that just <GradientText>makes sense.</GradientText></h1>
+	<h1>Privacy that just <GradientText><h1>makes sense.</h1></GradientText></h1>
 	<h2>Scroll down to find out more.</h2>
 </section>
 <section>
@@ -51,25 +65,6 @@
 		</div>
 	</div>
 </section>
-<section>
-	<div style="gap: 70px;">
-		<div>
-			<h1 style="font-size: 200px; padding: 0; margin: 0;">🌍</h1>
-		</div>
-		<div>
-			<h1>Costs <GradientText>nothing.</GradientText></h1>
-			<h2>
-				<span style="font-variation-settings: 'wdth' 125, 'wght' 200">Whispr</span> relies on
-				donations to keep operating.<br /> If you're an advocate for privacy, donate today!
-			</h2>
-			<div style="display: flex; justify-content: center;">
-				<div style="width: 100px;">
-					<AnchorButton>Donate</AnchorButton>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
 <Footer />
 
 <style lang="scss">
@@ -80,10 +75,21 @@
 		color: colours.$warning-100;
 		padding: 1rem;
 		text-align: center;
+
+		span {
+			display: inline-block;
+		}
+
+		button {
+			background: none;
+			border: none;
+			cursor: pointer;
+		}
 	}
 
 	h1 {
 		font-size: textSize.$largest;
+		margin: 0;
 	}
 
 	section {
