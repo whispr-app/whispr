@@ -13,6 +13,7 @@
 	import MockText from '$lib/components/MockText.svelte';
 	import Profile from '$lib/components/Profile.svelte';
 	import Settings from '$lib/components/Settings.svelte';
+	import WhisprLogoWhite from '$lib/components/whispr-logo-white.svelte';
 
 	$: mobile = navigator.userAgent.match(/Mobi/);
 
@@ -364,6 +365,9 @@
 	<div class="top">
 		<div class="side-bar">
 			<div class="options">
+				<div style="flex: 1; display: flex; justify-content: center;">
+					<WhisprLogoWhite></WhisprLogoWhite>
+				</div>
 				<Profile nickname={$authedUser?.username} status={'online'}></Profile>
 				<button on:click={() => (settingsOpen = true)} class="button-bg">
 					<i class="bi bi-gear-wide-connected"></i>
