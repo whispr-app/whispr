@@ -91,6 +91,7 @@
 
 <main>
 	<h1>Admin</h1>
+	<a href="/channels/@self">App</a>
 	<h2>KeyGen</h2>
 	<form on:submit|preventDefault={generateKeys}>
 		<label for="nKeys"> Number of keys </label>

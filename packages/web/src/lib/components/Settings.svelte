@@ -59,6 +59,11 @@
 			<button on:click={() => (settingPage = 'notifications')}>Notifications</button>
 			<button on:click={() => (settingPage = 'keybinds')}>Keybinds</button>
 			<h2>Extra</h2>
+			{#await libWhispr.isAuthorised() then isAuthorised}
+				{#if isAuthorised}
+					<button on:click={() => goto('/admin')}>Admin</button>
+				{/if}
+			{/await}
 			<button on:click={() => (settingPage = 'change_log')}>Change Log</button>
 			<button class="danger" on:click={signout}
 				>Log Out <span><i class="bi bi-box-arrow-right"></i></span></button
