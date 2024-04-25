@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>💬 Whispr</h1>
+  <h1 style="display: flex; justify-content: center; align-items: center; gap: 5px;"><img src="packages/web/static/favicon.png" alt="logo" height="24px"/> Whispr</h1>
   <p>The anonymous, decentralised & end-to-end encrypted messaging application</p>
 
 <b>🚧 Disclaimer: This project is still in development and is not yet ready for use 🚧</b>
