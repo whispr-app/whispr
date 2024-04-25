@@ -2,10 +2,6 @@
   <h1>💬 Whispr</h1>
   <p>The anonymous, decentralised & end-to-end encrypted messaging application</p>
 
-<a href="/LICENSE">
-  <img alt="GitHub" src="https://img.shields.io/github/license/morgandilling/ts-node-project-template?style=for-the-badge">
-</a>
-
 <b>🚧 Disclaimer: This project is still in development and is not yet ready for use 🚧</b>
 </div>
 
