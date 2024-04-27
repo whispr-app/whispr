@@ -3,6 +3,7 @@
 	import WhisprLogoWhite from '$lib/components/whispr-logo-white.svelte';
 	import { libWhispr, authedUser } from '$lib/libWhispr';
 	import axios, { AxiosError } from 'axios';
+	import '../app.css';
 
 	axios.interceptors.request.use((config) => {
 		if ($authedUser) config.headers['Authorization'] = `Bearer ${$authedUser.token}`;
@@ -94,9 +95,13 @@
 	}
 
 	:global(html) {
-		font-family: 'Mona Sans';
+		font-family: 'Commissioner', sans-serif;
+		font-optical-sizing: auto;
+		font-weight: 300;
+		font-style: normal;
 		padding: 0;
 		margin: 0;
+		ascent-override: 90%;
 	}
 
 	:global(body) {
@@ -119,12 +124,20 @@
 		scrollbar-width: thin;
 	}
 	:global(h1) {
-		font-weight: 800;
+		font-weight: 600;
 		font-stretch: 125%;
+		font-variation-settings:
+			'slnt' 0,
+			'FLAR' 100,
+			'VOLM' 0;
 	}
 	:global(h2) {
-		font-weight: 500;
+		font-weight: 400;
 		font-stretch: 125%;
+		font-variation-settings:
+			'slnt' 0,
+			'FLAR' 100,
+			'VOLM' 0;
 	}
 
 	:global(.icon) {
