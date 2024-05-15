@@ -9,6 +9,10 @@ declare global {
 		// interface Platform {}
 	}
 
+	declare interface Window {
+		emojis: string[]?;
+	}
+
 	declare const PKG: {
 		name: string;
 		version: string;

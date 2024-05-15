@@ -170,36 +170,3 @@
 	</form>
 	<p>{userResponseMessage}</p>
 </main>
-
-<style lang="scss">
-	@use 'lib/styles/colours' as colours;
-
-	.m10px {
-		margin: 10px;
-	}
-
-	.danger {
-		color: colours.$error-100;
-	}
-
-	main {
-		padding: 20px;
-	}
-
-	pre {
-		white-space: normal;
-	}
-
-	table {
-		width: 100%;
-		border-collapse: collapse;
-		margin: 10px;
-
-		th,
-		td {
-			padding: 10px;
-			margin: 0;
-			border: 1px solid #475466;
-		}
-	}
-</style>

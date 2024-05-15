@@ -1,14 +1,9 @@
 import adapter from '@sveltejs/adapter-static';
-import preprocessor from 'svelte-preprocess';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import autoprefixer from 'autoprefixer';
 import { transformSync } from 'esbuild';
 import browserslist from 'browserslist';
 import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 /** @type {import('./package.json')} */
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
@@ -34,13 +29,9 @@ const esbuildTargets = list
 const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
 	// for more information about preprocessors
-	preprocess: preprocessor({
+	preprocess: vitePreprocess({
 		postcss: {
 			plugins: [autoprefixer()]
-		},
-		scss: {
-			includePaths: [path.resolve(__dirname, 'src')],
-			outputStyle: 'compressed'
 		},
 		typescript({ content, filename }) {
 			const { code, map } = transformSync(content, {

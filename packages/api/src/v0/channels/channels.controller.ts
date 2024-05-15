@@ -1,5 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 import {
+  DeleteMessageSchema,
   GetChannelSchema,
   GetMessageSchema,
   GetMessagesSchemaParams,
@@ -7,6 +8,8 @@ import {
   MessagePostSchema,
   MessagePostSchemaBody,
   MessagePostSchemaParams,
+  UpdateMessageSchemaBody,
+  UpdateMessageSchemaParams,
 } from './channels.schema';
 import * as channelsService from './channels.service';
 import { AppError } from '@lib/exceptions';
@@ -179,4 +182,79 @@ export const postMessage: RequestHandler<
     id: message.id,
     createdAt: message.createdAt,
   });
+};
+
+export const updateMessage: RequestHandler<
+  UpdateMessageSchemaParams,
+  unknown,
+  UpdateMessageSchemaBody
+> = async (
+  req: Request<UpdateMessageSchemaParams, unknown, UpdateMessageSchemaBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { channelId, messageId } = req.params;
+  const { content } = req.body;
+
+  if (!/^[0-9a-fA-F]{24}$/.test(channelId)) {
+    return next(new AppError('validation', 'Invalid channel id'));
+  }
+
+  const userId = req.session?.userId;
+
+  if (!userId) {
+    return next(new AppError('unauthorised', 'No session found'));
+  }
+
+  const hasAccess = await channelsService.checkUserHasPermissions(
+    userId,
+    channelId
+  );
+
+  if (!hasAccess || !hasAccess.write) {
+    return next(new AppError('unauthorised', 'User does not have access'));
+  }
+
+  const message = await channelsService.updateMessage(messageId, content);
+
+  if (!message) {
+    return next(new AppError('validation', 'Message not found'));
+  }
+
+  return res.status(200).json({
+    id: message.id,
+    updatedAt: message.edited,
+  });
+};
+
+export const deleteMessage: RequestHandler<DeleteMessageSchema> = async (
+  req: Request<DeleteMessageSchema>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { channelId, messageId } = req.params;
+
+  if (!/^[0-9a-fA-F]{24}$/.test(channelId)) {
+    return next(new AppError('validation', 'Invalid channel id'));
+  }
+
+  const userId = req.session?.userId;
+
+  if (!userId) {
+    return next(new AppError('unauthorised', 'No session found'));
+  }
+
+  const message = await channelsService.getMessage(messageId);
+
+  if (!message) {
+    return next(new AppError('validation', 'Message not found'));
+  }
+
+  if (message.userId !== userId) {
+    return next(new AppError('unauthorised', 'User does not have permission'));
+  }
+
+  await channelsService.deleteMessage(messageId);
+
+  return res.status(204).json();
 };

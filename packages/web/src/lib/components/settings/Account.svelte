@@ -39,27 +39,3 @@
 	This action is instant and irreversible. After deleting your account, any associated data with
 	your account will be removed as soon as possible.
 </p>
-
-<style lang="scss">
-	@use 'lib/styles/colours.scss' as colours;
-
-	.profile {
-		scale: 1.5;
-		padding-left: 0.5rem;
-		width: fit-content;
-
-		margin-bottom: 1.5rem;
-	}
-
-	.no-margin {
-		margin: 0px;
-	}
-
-	.edit {
-		display: inline-block;
-		background: none;
-		border: none;
-		color: colours.$text-secondary-100;
-		scale: 1.1;
-	}
-</style>

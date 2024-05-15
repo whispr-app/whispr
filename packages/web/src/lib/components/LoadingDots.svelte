@@ -7,7 +7,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style lang="postcss">
 	.lds-ellipsis {
 		display: inline-block;
 		position: relative;

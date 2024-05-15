@@ -23,10 +23,3 @@
 <p>
 	{randomString}
 </p>
-
-<style lang="scss">
-	p {
-		width: 200px;
-		overflow-x: hidden;
-	}
-</style>

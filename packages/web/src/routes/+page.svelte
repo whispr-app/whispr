@@ -24,12 +24,12 @@
 <section>
 	<div style="gap: 20px;">
 		<div class="encrypted-messages" style="display: flex; flex-direction: column;">
-			<Message sentByMe={false} groupMessage={false}
+			<!-- <Message sentByMe={false} groupMessage={false}
 				><div style="margin: 10px;"><EncryptedText length={20} /></div></Message
 			>
 			<Message sentByMe={true} groupMessage={false}
 				><div style="margin: 10px;"><EncryptedText length={20} /></div></Message
-			>
+			> -->
 		</div>
 		<div>
 			<h1>Say <GradientText>what you want</GradientText></h1>
@@ -71,54 +71,3 @@
 	</div>
 </section>
 <Footer />
-
-<style lang="scss">
-	@use 'lib/styles/colours.scss' as colours;
-	@use 'lib/styles/textSize.scss' as textSize;
-
-	.warning {
-		color: colours.$warning-100;
-		padding: 1rem;
-		text-align: center;
-	}
-
-	h1 {
-		font-size: textSize.$largest;
-	}
-
-	section {
-		border-top: 1px solid colours.$outline-100;
-		border-bottom: solid 1px colours.$outline-100;
-		padding: 2rem;
-		padding-top: 14rem;
-		padding-bottom: 14rem;
-		box-sizing: border-box;
-		width: 100%;
-
-		> div {
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			align-items: center;
-		}
-	}
-
-	.encrypted-messages {
-		width: 400px;
-	}
-
-	@media screen and (max-width: 830px) {
-		section {
-			// padding-top: 8rem;
-			// padding-bottom: 8rem;
-
-			> div {
-				flex-direction: column;
-			}
-		}
-
-		.encrypted-messages {
-			width: 90%;
-		}
-	}
-</style>

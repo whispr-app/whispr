@@ -1,9 +1,20 @@
 <script lang="ts">
+	import '../app.css';
 	import { goto } from '$app/navigation';
-	import WhisprLogoWhite from '$lib/components/whispr-logo-white.svelte';
 	import { libWhispr, authedUser } from '$lib/libWhispr';
 	import axios, { AxiosError } from 'axios';
-	import '../app.css';
+	import { onMount } from 'svelte';
+
+	onMount(async () => {
+		const emojiCss = await fetch(
+			'https://cdn.jsdelivr.net/gh/iamludal/twemoji-awesome@1.1/twemoji-awesome.min.css'
+		).then((res) => res.text());
+		const emojis =
+			emojiCss
+				.match(/(?<=\.twa-)[A-Za-z-]+(?=,|:|{| )/gm)
+				?.filter((e) => !['lg', '2x', '3x', '4x', '5x', ''].includes(e)) || [];
+		window.emojis = emojis;
+	});
 
 	axios.interceptors.request.use((config) => {
 		if ($authedUser) config.headers['Authorization'] = `Bearer ${$authedUser.token}`;
@@ -34,97 +45,41 @@
 			return Promise.reject(error);
 		}
 	);
-
-	// const signout = async () => {
-	// 	try {
-	// 		await libWhispr.signout();
-	// 		goto('/');
-	// 		window.location.reload();
-	// 	} catch (e) {
-	// 		if (e instanceof AxiosError) {
-	// 			error = e.response?.data?.message || e.message;
-	// 		}
-	// 		return;
-	// 	}
-	// };
 </script>
 
-<!-- <div class="no-mobile">
-	<div>
-		<WhisprLogoWhite />
-	</div>
-	<h1>Mobile currently isn't supported.</h1>
-	<h2>Feel free to have a look on a desktop.</h2>
-</div> -->
+<slot />
 
-<div class="wrapper">
-	<slot />
-</div>
-
-<style lang="scss">
-	@use 'lib/styles/colours.scss' as colours;
+<style lang="postcss">
 	@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
+	@import url('https://cdn.jsdelivr.net/gh/iamludal/twemoji-awesome@1.1/twemoji-awesome.min.css');
 
-	@font-face {
-		font-family: 'Mona Sans';
-		src:
-			url('$lib/Mona-Sans.woff2') format('woff2 supports variations'),
-			url('$lib/Mona-Sans.woff2') format('woff2-variations');
-		font-weight: 200 900;
-		font-stretch: 75% 125%;
-	}
-
-	.wrapper {
-		position: absolute;
-		left: 0;
-		width: 100%;
-		bottom: 0;
-		height: 100%;
-	}
-
-	// @media (min-width: 768px) {
-	// 	.PWA-mobile-wrapper {
-	// 		bottom: 15px;
-	// 		height: calc(100% - 15px);
-	// 	}
-	// }
-
-	:global(html),
-	:global(body) {
-		overscroll-behavior-y: none;
+	:global(:root) {
+		--linearPrimarySecondary: linear-gradient(#6a42ec, #a791ed);
+		--linearPrimaryAccent: linear-gradient(#6a42ec, #4252ed);
+		--linearSecondaryAccent: linear-gradient(#a791ed, #4252ed);
+		--radialPrimarySecondary: radial-gradient(#6a42ec, #a791ed);
+		--radialPrimaryAccent: radial-gradient(#6a42ec, #4252ed);
+		--radialSecondaryAccent: radial-gradient(#a791ed, #4252ed);
 	}
 
 	:global(html) {
-		font-family: 'Commissioner', sans-serif;
+		font-family: 'Montserrat', sans-serif;
 		font-optical-sizing: auto;
-		font-weight: 300;
+		font-weight: 400;
 		font-style: normal;
-		padding: 0;
-		margin: 0;
 		ascent-override: 90%;
 	}
 
 	:global(body) {
-		padding: 0;
-		margin: 0;
-		width: 100%;
-		height: 100%;
-		background-color: colours.$background-100;
-		color: colours.$text-100;
+		background-color: theme('colors.background.950');
 	}
 
-	:global(a) {
-		color: colours.$primary-100;
+	:global(h1, h2, h3, h4, h5, h6) {
+		font-family: 'Commissioner', sans-serif;
 	}
 
-	:global(*) {
-		font-weight: 300;
-		font-stretch: 100%;
-		scrollbar-color: colours.$text-secondary-100 colours.$background-0;
-		scrollbar-width: thin;
-	}
 	:global(h1) {
-		font-weight: 600;
+		font-weight: 500;
 		font-stretch: 125%;
 		font-variation-settings:
 			'slnt' 0,
@@ -132,77 +87,11 @@
 			'VOLM' 0;
 	}
 	:global(h2) {
-		font-weight: 400;
+		font-weight: 300;
 		font-stretch: 125%;
 		font-variation-settings:
 			'slnt' 0,
 			'FLAR' 100,
 			'VOLM' 0;
-	}
-
-	:global(.icon) {
-		scale: 1.5;
-		width: 100%;
-		height: 100%;
-		display: inline-block;
-		// justify-content: center;
-		// align-items: center;
-		// text-align: center;
-		vertical-align: middle;
-
-		&::before {
-			vertical-align: -5px;
-		}
-	}
-
-	:global(button) {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		padding: 0.5rem;
-
-		font-weight: 500;
-		font-size: large;
-		width: fit-content;
-
-		background-color: colours.$button-100;
-		color: colours.$text-100;
-		border-radius: 8px;
-		border: 1px solid colours.$outline-100;
-
-		transition: border 0.2s ease-in-out;
-
-		&:hover {
-			border: 1px solid colours.$outline-highlighted-100;
-			cursor: pointer;
-		}
-
-		&:disabled {
-			opacity: 0.5;
-			cursor: not-allowed;
-		}
-	}
-
-	:global(.button-primary) {
-		color: colours.$text-100;
-		background-color: colours.$primary-100;
-		border: 1px solid colours.$primary-100;
-
-		&:hover {
-			border: 1px solid colours.$text-100;
-		}
-	}
-
-	:global(.button-danger) {
-		color: colours.$error-100;
-		background-color: colours.$background-secondary-100;
-
-		&:hover {
-			border: 1px solid colours.$error-100;
-		}
-	}
-
-	:global(.text-secondary) {
-		color: colours.$text-secondary-100;
 	}
 </style>

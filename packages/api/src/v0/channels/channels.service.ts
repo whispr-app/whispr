@@ -299,3 +299,151 @@ export const createMessage = async (
 
   return message;
 };
+
+export const updateMessage = async (
+  messageId: string,
+  content: { cipher: string; target: string; encryptedSymmetricKey: string }[]
+) => {
+  const message = await prisma.message.update({
+    where: {
+      id: messageId,
+    },
+    data: {
+      edited: new Date(),
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          nickname: true,
+          password: false,
+          keyPair: {
+            select: {
+              publicKey: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!message || !message.channelId) {
+    return;
+  }
+
+  await prisma.channel.update({
+    where: {
+      id: message.channelId,
+    },
+    data: {
+      lastMessageId: message.id,
+    },
+  });
+
+  await prisma.messageText.deleteMany({
+    where: {
+      messageId,
+    },
+  });
+
+  for (const { cipher, target, encryptedSymmetricKey } of content) {
+    await prisma.messageText.create({
+      data: {
+        cipherText: cipher,
+        messageId: message.id,
+        targetUserId: target,
+        encryptedSymmetricKey,
+      },
+    });
+  }
+
+  const authorId = message.userId;
+
+  if (!authorId) {
+    return;
+  }
+
+  notifications.fire(GatewayServerEvent.MessageUpdate, {
+    targetIds: [authorId, ...content.map(c => c.target)],
+    data: {
+      channelId: message.channelId,
+      content: [
+        await getMessageText(message.id, authorId),
+        ...(await Promise.all(
+          content.map(async c => {
+            return await getMessageText(message.id, c.target);
+          })
+        )),
+      ],
+      author: message.user,
+      createdAt: message.createdAt,
+      updatedAt: message.updatedAt,
+      id: message.id,
+    },
+  });
+
+  return message;
+};
+
+export const deleteMessage = async (messageId: string) => {
+  const message = await prisma.message.findUnique({
+    where: {
+      id: messageId,
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          nickname: true,
+          password: false,
+          keyPair: {
+            select: {
+              publicKey: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!message || !message.channelId) {
+    return;
+  }
+
+  const authorId = message.userId;
+  const content = await prisma.messageText.findMany({
+    where: {
+      messageId,
+    },
+    select: {
+      targetUserId: true,
+    },
+  });
+
+  if (!authorId) {
+    return;
+  }
+
+  await prisma.messageText.deleteMany({
+    where: {
+      messageId,
+    },
+  });
+
+  await prisma.message.delete({
+    where: {
+      id: messageId,
+    },
+  });
+
+  notifications.fire(GatewayServerEvent.MessageDelete, {
+    targetIds: [authorId, ...content.map(c => c.targetUserId)],
+    data: {
+      channelId: message.channelId,
+      author: message.user,
+      id: message.id,
+    },
+  });
+};
