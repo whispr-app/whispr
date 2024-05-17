@@ -20,14 +20,13 @@ export default (
   args: string[],
   defaultReturn?: string
 ): string | undefined => {
-  let value: string = '';
-  argvs.forEach(argv => {
-    args.forEach(arg => {
+  for (const [index, argv] of argvs.entries()) {
+    for (const arg of args) {
+      // format: --arg value
       if (argv.startsWith(arg)) {
-        // format: --arg=value
-        value = argv.split('=').slice(1).join('');
+        return argvs[index + 1];
       }
-    });
-  });
-  return value || defaultReturn;
+    }
+  }
+  return defaultReturn;
 };
