@@ -7,6 +7,7 @@
 	import { libWhispr, authedUser } from '$lib/libWhispr';
 	import { AxiosError } from 'axios';
 	import { browser } from '$app/environment';
+	import Button from '$lib/components/Button.svelte';
 
 	if ($authedUser) {
 		browser && goto('/channels/@self');
@@ -130,91 +131,112 @@
 	<title>Register - Whispr</title>
 </svelte:head>
 
-<main>
-	<div class="logo">
+<main class="w-vw h-dvh overflow-hidden flex justify-center items-center">
+	<div class="w-40 flex justify-center items-center absolute bottom-0 left-2.5">
 		<WhisprLogoWhite />
 	</div>
 	<Modal>
-		<form on:submit|preventDefault={register}>
-			<h1>Register</h1>
+		<form class="flex flex-col justify-center items-center text-center" on:submit|preventDefault>
+			<h1 class="text-3xl">Register</h1>
 			{#if errorMessage}
-				<p class="error-message">{errorMessage}</p>
+				<p class="text-red-500 m-0 mb-2 relative top-0 w-full max-w-[418px]">{errorMessage}</p>
 			{/if}
-			<Input
-				type="text"
-				placeholder="Access Key"
-				bind:value={accessKey}
-				highlightError={!!accessKeyError}
-				errorMessage={accessKeyError}
-				change={() => {
-					accessKeyError = '';
-					if (accessKey === '') {
-						accessKeyError = 'Access key is required at this time.';
-					}
-				}}><i class="bi bi-123 icon"></i></Input
-			>
+			<div class="mt-4 mb-2">
+				<Input
+					type="text"
+					placeholder="Access Key"
+					bind:value={accessKey}
+					highlightError={!!accessKeyError}
+					errorMessage={accessKeyError}
+					change={() => {
+						accessKeyError = '';
+						if (accessKey === '') {
+							accessKeyError = 'Access key is required at this time.';
+						}
+					}}><i class="bi bi-123 scale-125 opacity-50"></i></Input
+				>
+			</div>
 			<p>Create some credentials</p>
-			<Input
-				type="username"
-				placeholder="Username"
-				bind:value={username}
-				highlightError={!!usernameError}
-				errorMessage={usernameError}
-				change={() => {
-					usernameError = '';
-					if (username === '') {
-						usernameError = 'Username must not be empty';
-					} else if (!usernameRegex.test(username)) {
-						usernameError =
-							'Username must be between 3 and 20 characters and contain only letters, numbers, underscores and hyphens';
-					}
-				}}
-				domain={(browser && window.location.hostname) || ''}><i class="bi bi-type icon"></i></Input
-			>
-			<Input
-				type="password"
-				placeholder="Password"
-				bind:value={password}
-				change={() => {
-					passwordError = '';
-					const passwordCheckResult = passwordCheck(password);
-					if (passwordCheckResult !== true) {
-						passwordError = passwordCheckResult;
-					}
-				}}
-				highlightError={!!passwordError || !!passwordConfirmError}
-				errorMessage={passwordError}><i class="bi bi-key icon"></i></Input
-			>
-			<Input
-				type="password"
-				placeholder="Confirm Password"
-				bind:value={passwordConfirm}
-				change={() => {
-					passwordConfirmError = '';
-					if (password !== passwordConfirm) {
-						passwordConfirmError = 'Passwords do not match';
-					}
-				}}
-				highlightError={!!passwordConfirmError}
-				errorMessage={passwordConfirmError}><i class="bi bi-key icon"></i></Input
-			>
+			<div class="mt-2">
+				<Input
+					type="username"
+					placeholder="Username"
+					bind:value={username}
+					highlightError={!!usernameError}
+					errorMessage={usernameError}
+					change={() => {
+						usernameError = '';
+						if (username === '') {
+							usernameError = 'Username must not be empty';
+						} else if (!usernameRegex.test(username)) {
+							usernameError =
+								'Username must be between 3 and 20 characters and contain only letters, numbers, underscores and hyphens';
+						}
+					}}><i class="bi bi-type scale-125 opacity-50"></i></Input
+				>
+			</div>
+			<div class="mt-3">
+				<Input
+					type="password"
+					placeholder="Password"
+					bind:value={password}
+					change={() => {
+						passwordError = '';
+						const passwordCheckResult = passwordCheck(password);
+						if (passwordCheckResult !== true) {
+							passwordError = passwordCheckResult;
+						}
+					}}
+					highlightError={!!passwordError || !!passwordConfirmError}
+					errorMessage={passwordError}><i class="bi bi-key scale-125 opacity-50"></i></Input
+				>
+			</div>
+			<div class="mt-3 mb-2">
+				<Input
+					type="password"
+					placeholder="Confirm Password"
+					bind:value={passwordConfirm}
+					change={() => {
+						passwordConfirmError = '';
+						if (password !== passwordConfirm) {
+							passwordConfirmError = 'Passwords do not match';
+						}
+					}}
+					highlightError={!!passwordConfirmError}
+					errorMessage={passwordConfirmError}><i class="bi bi-key scale-125 opacity-50"></i></Input
+				>
+			</div>
 			<p>What do you call yourself?</p>
-			<Input
-				type="text"
-				placeholder="Nickname"
-				bind:value={nickname}
-				highlightError={!!nicknameError}
-				errorMessage={nicknameError}><i class="bi bi-type icon"></i></Input
-			>
-			<button disabled={debounce} type="submit">
-				{#if debounce}
-					<LoadingDots />
-				{:else}
-					Register
-				{/if}
-			</button>
-			<p>Already have an account?</p>
+			<div class="mt-2">
+				<Input
+					type="text"
+					placeholder="Nickname"
+					bind:value={nickname}
+					highlightError={!!nicknameError}
+					errorMessage={nicknameError}><i class="bi bi-type scale-125 opacity-50"></i></Input
+				>
+			</div>
+			<div class="mt-2">
+				<Button disabled={debounce} on:click={register}>
+					{#if debounce}
+						<LoadingDots />
+					{:else}
+						Register
+					{/if}
+				</Button>
+			</div>
+			<p class="mt-2">Already have an account?</p>
 			<a href="/login">Login</a>
 		</form>
 	</Modal>
 </main>
+
+<style lang="postcss">
+	main {
+		background-image: url('/wave.svg');
+		background-repeat: no-repeat;
+		background-size: cover;
+
+		-webkit-overflow-scrolling: auto;
+	}
+</style>

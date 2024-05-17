@@ -4,6 +4,7 @@
 	import { libWhispr, authedUser } from '$lib/libWhispr';
 	import axios, { AxiosError } from 'axios';
 	import { onMount } from 'svelte';
+	import MousePositionContainer from '$lib/components/MousePositionContainer.svelte';
 
 	onMount(async () => {
 		const emojiCss = await fetch(
@@ -47,6 +48,7 @@
 	);
 </script>
 
+<MousePositionContainer></MousePositionContainer>
 <slot />
 
 <style lang="postcss">
@@ -68,6 +70,7 @@
 		font-weight: 400;
 		font-style: normal;
 		ascent-override: 90%;
+		background-color: theme('colors.background.950');
 	}
 
 	:global(body) {
@@ -76,6 +79,16 @@
 
 	:global(h1, h2, h3, h4, h5, h6) {
 		font-family: 'Commissioner', sans-serif;
+	}
+
+	:global(*)::selection {
+		color: theme('colors.text.100');
+		background-color: theme('colors.primary.600');
+	}
+
+	:global(*)::-moz-selection {
+		color: theme('colors.text.100');
+		background-color: theme('colors.primary.600');
 	}
 
 	:global(h1) {
@@ -93,5 +106,13 @@
 			'slnt' 0,
 			'FLAR' 100,
 			'VOLM' 0;
+	}
+
+	:global(a) {
+		color: theme('colors.primary.500');
+		display: block;
+	}
+	:global(a):hover {
+		text-decoration-line: underline;
 	}
 </style>

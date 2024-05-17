@@ -8,6 +8,7 @@
 	import LoadingDots from '$lib/components/LoadingDots.svelte';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
+	import Button from '$lib/components/Button.svelte';
 
 	const returnTo = (browser && $page.url.searchParams.get('returnTo')) || '/channels/@self';
 
@@ -94,46 +95,62 @@
 	<title>Login - Whispr</title>
 </svelte:head>
 
-<main>
-	<div class="logo">
+<main class="w-vw h-dvh overflow-hidden flex justify-center items-center">
+	<div class="w-40 flex justify-center items-center absolute bottom-0 left-2.5">
 		<WhisprLogoWhite />
 	</div>
 	<Modal>
-		<form on:submit|preventDefault={signin}>
-			<h1>Log in</h1>
+		<form class="flex flex-col justify-center items-center text-center" on:submit|preventDefault>
+			<h1 class="text-3xl">Log in</h1>
 			{#if errorMessage}
-				<p class="error-message">{errorMessage}</p>
+				<p class="text-red-500 m-0 mb-2 relative top-0 w-full max-w-[418px]">{errorMessage}</p>
 			{/if}
-			<Input
-				type="username"
-				placeholder="Username"
-				bind:value={username}
-				highlightError={!!usernameError}
-				errorMessage={usernameError}
-				change={() => {
-					usernameError = '';
-					if (username === '') {
-						usernameError = 'Username must not be empty';
-					}
-				}}
-				domain={(browser && window.location.hostname) || ''}><i class="bi bi-type icon"></i></Input
-			>
-			<Input
-				type="password"
-				placeholder="Password"
-				bind:value={password}
-				highlightError={!!passwordError}
-				errorMessage={passwordError}><i class="bi bi-key icon"></i></Input
-			>
-			<button disabled={debounce} type="submit">
-				{#if debounce}
-					<LoadingDots />
-				{:else}
-					Log in
-				{/if}
-			</button>
-			<p>Don't have an account?</p>
+			<div class="mt-4">
+				<Input
+					type="username"
+					placeholder="Username"
+					bind:value={username}
+					highlightError={!!usernameError}
+					errorMessage={usernameError}
+					change={() => {
+						usernameError = '';
+						if (username === '') {
+							usernameError = 'Username must not be empty';
+						}
+					}}><i class="bi bi-type scale-125 opacity-50"></i></Input
+				>
+			</div>
+			<div class="mt-3">
+				<Input
+					type="password"
+					placeholder="Password"
+					bind:value={password}
+					highlightError={!!passwordError}
+					errorMessage={passwordError}><i class="bi bi-key scale-125 opacity-50"></i></Input
+				>
+			</div>
+
+			<div class="mt-2">
+				<Button disabled={debounce} on:click={signin}>
+					{#if debounce}
+						<LoadingDots />
+					{:else}
+						Log in
+					{/if}
+				</Button>
+			</div>
+			<p class="mt-2">Don't have an account?</p>
 			<a href="/register">Register</a>
 		</form>
 	</Modal>
 </main>
+
+<style lang="postcss">
+	main {
+		background-image: url('/wave.svg');
+		background-repeat: no-repeat;
+		background-size: cover;
+
+		-webkit-overflow-scrolling: auto;
+	}
+</style>

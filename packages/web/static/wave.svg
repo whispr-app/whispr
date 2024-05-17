@@ -7,8 +7,8 @@
       }
     </style>
     <linearGradient id="linear-gradient" x1="480" y1="540" x2="480" y2="0" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#785df5"/>
-      <stop offset="1" stop-color="#222831"/>
+      <stop offset="0" stop-color="oklch(29.33% 0.006 271.22)"/>
+      <stop offset="1" stop-color="oklch(20.15% 0.006 285.86)"/>
     </linearGradient>
   </defs>
   <path class="cls-1" d="m0,0v540s110.08-183.51,172.92-208.99c57.1-23.16,186.27,45.42,245.02,26.82,68.55-21.71,151.68-157.57,215.76-190.16,52.59-26.75,180.1-20.34,230.39-51.2C896.25,96.74,960,0,960,0H0Z"/>

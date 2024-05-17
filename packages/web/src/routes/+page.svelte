@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Header from '$lib/components/Header.svelte';
-	import GradientText from '$lib/components/GradientText.svelte';
 	import Message from '$lib/components/Message.svelte';
 	import EncryptedText from '$lib/components/EncryptedText.svelte';
 	import AnchorButton from '$lib/components/AnchorButton.svelte';
@@ -13,61 +12,28 @@
 </svelte:head>
 
 <Header />
-<div class="warning">
-	⚠️ WARNING! Whispr is currently in development and very much in an unfinished state. Data is
-	subject to be wiped and you shouldn't rely on this for secure communication yet.
+<div class="w-full flex justify-center items-center">
+	<div
+		class="rounded-full text-orange-400 border-orange-400 bg-orange-500 bg-opacity-10 border-2 pl-2 pr-2 w-fit h-fit text-center"
+	>
+		⚠️ WARNING! Whispr is currently in development and very much in an unfinished state. Data is
+		subject to be wiped and you shouldn't rely on this for secure communication yet.
+	</div>
 </div>
-<section>
-	<h1>Privacy that just <GradientText>makes sense.</GradientText></h1>
-	<h2>Scroll down to find out more.</h2>
+<section class="w-vw py-72 text-center flex justify-center items-center flex-col">
+	<h1 class="text-text-100 text-6xl inline-block w-fit">
+		The best communications app for <h1 class="inline-block text-primary-500">privacy.</h1>
+	</h1>
+	<h2 class="text-text-400 mt-3 text-5xl w-fit">At least we think so. 😉</h2>
 </section>
-<section>
-	<div style="gap: 20px;">
-		<div class="encrypted-messages" style="display: flex; flex-direction: column;">
-			<!-- <Message sentByMe={false} groupMessage={false}
-				><div style="margin: 10px;"><EncryptedText length={20} /></div></Message
-			>
-			<Message sentByMe={true} groupMessage={false}
-				><div style="margin: 10px;"><EncryptedText length={20} /></div></Message
-			> -->
-		</div>
-		<div>
-			<h1>Say <GradientText>what you want</GradientText></h1>
-			<h2>with end-to-end encrypted messages.</h2>
-		</div>
-	</div>
-</section>
-<section>
-	<div style="gap: 70px;">
-		<div>
-			<h1>Keep your identity <GradientText>private.</GradientText></h1>
-			<h2>
-				<span style="font-variation-settings: 'wdth' 125, 'wght' 200">Whispr</span> is anonymous
-				<br /> and decentralised to protect your privacy.
-			</h2>
-		</div>
-		<div>
-			<img src="/profile.svg" alt="profile" width="200px" style="filter: blur(10px);" />
-		</div>
-	</div>
-</section>
-<section>
-	<div style="gap: 70px;">
-		<div>
-			<h1 style="font-size: 200px; padding: 0; margin: 0;">🌍</h1>
-		</div>
-		<div>
-			<h1>Costs <GradientText>nothing.</GradientText></h1>
-			<h2>
-				<span style="font-variation-settings: 'wdth' 125, 'wght' 200">Whispr</span> relies on
-				donations to keep operating.<br /> If you're an advocate for privacy, donate today!
-			</h2>
-			<div style="display: flex; justify-content: center;">
-				<div style="width: 100px;">
-					<AnchorButton>Donate</AnchorButton>
-				</div>
-			</div>
-		</div>
-	</div>
+<section class="max-w-7xl py-48 p-8 ml-auto mr-auto flex justify-center items-start flex-col">
+	<h2 class="text-text-100 text-5xl w-full">This site is still under construction. 🚧</h2>
+	<h3 class="text-text-400 mt-3 text-4xl w-full">
+		More information will come at a later point. For now, check out our <a
+			class="inline-block ml-1"
+			href="https://github.com/whispr-app/whispr"
+			target="_blank">GitHub</a
+		>
+	</h3>
 </section>
 <Footer />

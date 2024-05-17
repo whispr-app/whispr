@@ -5,25 +5,24 @@
 	const gitHash = GIT_HASH;
 </script>
 
-<footer>
-	<div class="container">
-		<div>
-			<a href="/" class="logo">
+<footer class="p-3 h-48 flex justify-center items-start">
+	<div class="flex flex-row justify-evenly items-start">
+		<div class="text-center block m-3">
+			<a href="/" class="w-40 h-full flex justify-center items-center">
 				<WhisprLogoWhite />
 			</a>
-			<p>© 2023 Whispr</p>
 		</div>
-		<div>
-			<h3>Product</h3>
+		<div class="text-center block m-3">
+			<h3 class="text-text-100">Product</h3>
 			<a href="https://github.com/whispr-app/" target="_blank">GitHub</a>
 			<a target="_blank" href="https://github.com/whispr-app/whispr/commit/{gitHash.full}"
 				>v{version} ({gitHash.short})</a
 			>
 		</div>
-		<div>
-			<h3>Information</h3>
-			<p>Acknowledgments</p>
-			<p>Licenses</p>
+		<div class="text-center block m-3">
+			<h3 class="text-text-100">Information</h3>
+			<a href="/#">Acknowledgments</a>
+			<a href="/#">Licenses</a>
 		</div>
 	</div>
 </footer>
