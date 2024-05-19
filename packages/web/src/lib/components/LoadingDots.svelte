@@ -1,4 +1,4 @@
-<div>
+<div class="w-fit h-fit">
 	<div class="lds-ellipsis">
 		<div></div>
 		<div></div>
@@ -11,13 +11,13 @@
 	.lds-ellipsis {
 		display: inline-block;
 		position: relative;
-		width: 80px;
-		height: 13px;
+		width: 60px;
+		height: 10px;
 	}
 	.lds-ellipsis div {
 		position: absolute;
-		width: 12px;
-		height: 12px;
+		width: 10px;
+		height: 10px;
 		border-radius: 50%;
 		background: #fff;
 		animation-timing-function: cubic-bezier(0, 1, 1, 0);

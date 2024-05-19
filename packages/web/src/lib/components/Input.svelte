@@ -28,37 +28,39 @@
 	};
 </script>
 
-{#if highlightError && errorMessage}
-	<p class="text-red-500 m-0 mb-2 relative top-0 w-full max-w-[418px]">{errorMessage}</p>
-{/if}
-<label class="relative block">
-	<span class="sr-only">{type}</span>
+<div>
+	{#if highlightError && errorMessage}
+		<p class="text-red-500 m-0 mb-2 relative top-0 w-full max-w-[418px]">{errorMessage}</p>
+	{/if}
+	<label class="relative block">
+		<span class="sr-only">{type}</span>
 
-	{#if SLOTS.default}
-		<span
-			class="absolute inset-y-0 left-0 flex items-center pl-3 pr-2.5 bg-background-700 rounded-l-full"
-			><slot /></span
-		>
-	{/if}
-	<input
-		{autocomplete}
-		{id}
-		use:typeAction
-		{placeholder}
-		bind:value
-		on:change={change}
-		on:input={input}
-		class="transition-all ease-in-out text-text-100 p-2 block w-full placeholder:text-text-400 pl-12 pr-4 bg-background-800 rounded-full outline-none focus:ring-2 focus:ring-background-400 {highlightError
-			? 'focus:ring-red-500'
-			: ''}"
-		name={id}
-	/>
-	{#if type === 'password'}
-		<span class="h-[22px] absolute top-1/2 -translate-y-1/2 right-4 opacity-50"
-			><button
-				on:click={togglePasswordVisibility}
-				class={`bi ${passwordVisible ? 'bi-eye' : 'bi-eye-slash'}`}
-			></button></span
-		>
-	{/if}
-</label>
+		{#if SLOTS.default}
+			<span
+				class="absolute inset-y-0 left-0 flex items-center pl-3 pr-2.5 bg-background-700 rounded-l-full"
+				><slot /></span
+			>
+		{/if}
+		<input
+			{autocomplete}
+			{id}
+			use:typeAction
+			{placeholder}
+			bind:value
+			on:change={change}
+			on:input={input}
+			class="transition-all ease-in-out text-text-100 p-2 block w-full placeholder:text-text-400 pl-12 pr-4 bg-background-800 rounded-full outline-none focus:ring-2 focus:ring-background-400 {highlightError
+				? 'focus:ring-red-500'
+				: ''}"
+			name={id}
+		/>
+		{#if type === 'password'}
+			<span class="h-[22px] absolute top-1/2 -translate-y-1/2 right-4 opacity-50"
+				><button
+					on:click={togglePasswordVisibility}
+					class={`bi ${passwordVisible ? 'bi-eye' : 'bi-eye-slash'}`}
+				></button></span
+			>
+		{/if}
+	</label>
+</div>
