@@ -409,7 +409,11 @@
 			</div>
 			<div class="flex-grow w-full h-full overflow-y-scroll p-2.5 pb-52 pr-4 channelsScrollbar">
 				{#each $channels as channel}
-					{#if chatSearchString.length === 0 || (channel.userChannelPermissions.length === 2 && getUserFromUsers(channel.userChannelPermissions)?.nickname.includes(chatSearchString)) || channel.name?.includes(chatSearchString)}
+					{#if chatSearchString.length === 0 || (channel.userChannelPermissions.length === 2 && getUserFromUsers(channel.userChannelPermissions)
+								?.nickname.toLowerCase()
+								.includes(chatSearchString.toLowerCase())) || channel.name
+							?.toLowerCase()
+							.includes(chatSearchString.toLowerCase())}
 						<a
 							style="text-decoration: none;"
 							class="no-underline w-full text-text-100 rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-2.5 gap-2.5"
