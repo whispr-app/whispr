@@ -44,37 +44,78 @@
 </script>
 
 {#if open}
-	<div class="main-container">
-		<button class="button-bg close" on:click={() => dispatch('close')}
-			><i class="bi bi-x-lg"></i></button
+	<div class="bg-background-950 flex flex-row h-dvh justify-center z-50">
+		<button
+			class="absolute top-4 right-4 rounded-full aspect-square bg-background-800 p-3 text-text-100 hover:bg-background-700 flex justify-center items-center"
+			on:click={() => dispatch('close')}
+			><i class="bi bi-x-lg w-fit h-4 flex justify-center items-center"></i></button
 		>
-		<div class="side-bar">
-			<h2>User Settings</h2>
-			<button on:click={() => (settingPage = 'account')}>Account</button>
-			<button on:click={() => (settingPage = 'privacy')}>Privacy</button>
-			<button on:click={() => (settingPage = 'instance')}>Instance</button>
-			<h2>App Settings</h2>
-			<button on:click={() => (settingPage = 'appearance')}>Appearance</button>
-			<button on:click={() => (settingPage = 'accessibility')}>Accessibility</button>
-			<button on:click={() => (settingPage = 'notifications')}>Notifications</button>
-			<button on:click={() => (settingPage = 'keybinds')}>Keybinds</button>
-			<h2>Extra</h2>
+		<div class="w-80 min-w-80 h-dvh bg-background-900 flex flex-col items-center relative px-4">
+			<h2 class="text-xl font-medium m-0.5 mt-4 text-text-400 text-left w-full px-1.5">
+				User Settings
+			</h2>
+			<button
+				class="text-text-100 bg-transparent w-full rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-1.5 pl-2 gap-4 font-medium transition-colors"
+				on:click={() => (settingPage = 'account')}>Account</button
+			>
+			<button
+				class="text-text-100 bg-transparent w-full rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-1.5 pl-2 gap-4 font-medium transition-colors"
+				on:click={() => (settingPage = 'privacy')}>Privacy</button
+			>
+			<button
+				class="text-text-100 bg-transparent w-full rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-1.5 pl-2 gap-4 font-medium transition-colors"
+				on:click={() => (settingPage = 'instance')}>Instance</button
+			>
+			<h2 class="text-xl font-medium m-0.5 mt-4 text-text-400 text-left w-full px-1.5">
+				App Settings
+			</h2>
+			<button
+				class="text-text-100 bg-transparent w-full rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-1.5 pl-2 gap-4 font-medium transition-colors"
+				on:click={() => (settingPage = 'appearance')}>Appearance</button
+			>
+			<button
+				class="text-text-100 bg-transparent w-full rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-1.5 pl-2 gap-4 font-medium transition-colors"
+				on:click={() => (settingPage = 'accessibility')}>Accessibility</button
+			>
+			<button
+				class="text-text-100 bg-transparent w-full rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-1.5 pl-2 gap-4 font-medium transition-colors"
+				on:click={() => (settingPage = 'notifications')}>Notifications</button
+			>
+			<button
+				class="text-text-100 bg-transparent w-full rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-1.5 pl-2 gap-4 font-medium transition-colors"
+				on:click={() => (settingPage = 'keybinds')}>Keybinds</button
+			>
+			<h2 class="text-xl font-medium m-0.5 mt-4 text-text-400 text-left w-full px-1.5">Extra</h2>
 			{#await libWhispr.isAuthorised() then isAuthorised}
 				{#if isAuthorised}
-					<button on:click={() => goto('/admin')}>Admin</button>
+					<button
+						class="text-text-100 bg-transparent w-full rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-1.5 pl-2 gap-4 font-medium transition-colors"
+						on:click={() => goto('/admin')}>Admin</button
+					>
 				{/if}
 			{/await}
-			<button on:click={() => (settingPage = 'change_log')}>Change Log</button>
-			<button class="danger" on:click={signout}
-				>Log Out <span><i class="bi bi-box-arrow-right"></i></span></button
+			<button
+				class="text-text-100 bg-transparent w-full rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-1.5 pl-2 gap-4 font-medium transition-colors"
+				on:click={() => (settingPage = 'change_log')}>Change Log</button
 			>
-			<hr />
-			<a target="_blank" href="https://github.com/whispr-app/whispr/commit/{gitHash.full}"
+			<button
+				class="text-text-100 bg-transparent w-full rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-1.5 pl-2 gap-4 font-medium transition-colors hover:text-red-500"
+				on:click={signout}
+				>Log Out <span class="ml-auto"><i class="bi bi-box-arrow-right text-text-400"></i></span
+				></button
+			>
+			<hr class="border-t border-background-500 w-[calc(100%_-_16px)] m-2" />
+			<a
+				class="text-text-400 w-full text-left px-1.5 m-0.5"
+				target="_blank"
+				href="https://github.com/whispr-app/whispr/commit/{gitHash.full}"
 				>v{version} ({gitHash.short})</a
 			>
-			<p>{libWhispr.fetchBrowserVersion()}</p>
+			<p class="text-text-400 w-full text-left px-1.5 m-0.5">
+				{libWhispr.fetchBrowserVersion()}
+			</p>
 		</div>
-		<main>
+		<main class="flex-grow h-dvh flex flex-col w-full">
 			<svelte:component this={settingPages[settingPage]} />
 		</main>
 	</div>

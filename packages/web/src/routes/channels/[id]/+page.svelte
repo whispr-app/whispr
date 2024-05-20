@@ -19,6 +19,7 @@
 	import TextArea from '$lib/components/TextArea.svelte';
 	import Message from '$lib/components/Message.svelte';
 	import TooltipContainer from '$lib/components/TooltipContainer.svelte';
+	import Button from '$lib/components/Button.svelte';
 
 	$: mobile = navigator.userAgent.match(/Mobi/);
 
@@ -216,11 +217,10 @@
 					}
 				}
 				messages.set(_messages);
+				requestAnimationFrame(() => {
+					chatElement?.scrollTo(0, chatElement.scrollHeight);
+				});
 			});
-			// .then(() => {
-			// 	chatElement?.scrollTo(0, chatElement.scrollHeight);
-			// 	console.log(chatElement?.scrollHeight, chatElement?.scrollTop);
-			// });
 		}
 	}
 
@@ -266,6 +266,9 @@
 							_messages.unshift([message]);
 						}
 						messages.set(_messages);
+						requestAnimationFrame(() => {
+							chatElement?.scrollTo(0, chatElement.scrollHeight);
+						});
 					}
 
 					const channel = _channels.find((channel) => channel.id === message.channelId);
@@ -274,6 +277,7 @@
 						_channels = await sortChannels(_channels);
 						channels.set(_channels);
 					}
+
 					break;
 				}
 				case GatewayServerEvent.ChannelCreate: {
@@ -340,26 +344,32 @@
 </svelte:head>
 
 {#if createChannelModalOpen}
-	<div class="add-channel">
-		<h1>Start a new chat</h1>
-		<form on:submit|preventDefault={createChannel} method="dialog">
-			<!-- <input type="text" id="name" bind:value={username} /> -->
+	<div
+		class="fixed left-0 top-0 right-0 bottom-0 z-50 backdrop-blur-md bg-background-950 bg-opacity-30"
+	>
+		<div
+			class="w-96 fixed top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 flex flex-col items-center justify-center rounded-3xl bg-background-900 p-6 px-10 shadow-md shadow-background-950 z-50 text-text-100 gap-2"
+		>
+			<h1 class="text-2xl">Start a new chat</h1>
+
 			<Input
 				bind:value={createChannelUsername}
 				placeholder="Username"
 				highlightError={!!createChannelError}
 				errorMessage={createChannelError}><i class="bi bi-type icon"></i></Input
 			>
-			<br />
-			<button type="submit">Open</button>
-		</form>
-		<button
-			on:click={() => {
-				createChannelModalOpen = false;
-				createChannelUsername = '';
-				createChannelError = '';
-			}}>Close</button
-		>
+			<div class="flex flex-row gap-2">
+				<Button
+					variant="secondary"
+					on:click={() => {
+						createChannelModalOpen = false;
+						createChannelUsername = '';
+						createChannelError = '';
+					}}>Close</Button
+				>
+				<Button on:click={createChannel}>Open</Button>
+			</div>
+		</div>
 	</div>
 {/if}
 
@@ -386,7 +396,7 @@
 			</div>
 			<div class="px-2.5 h-10 mb-2.5 pt-0 flex justify-center items-center gap-2.5 w-full">
 				<Input bind:value={chatSearchString} placeholder="Search chats"
-					><i class="bi bi-search text-text-300"></i></Input
+					><i class="bi bi-search text-text-400"></i></Input
 				>
 				<button
 					class="h-full aspect-square rounded-full flex justify-center items-center bg-background-800 hover:bg-background-700"
@@ -394,66 +404,67 @@
 						createChannelModalOpen = true;
 					}}
 				>
-					<i class="bi bi-pencil text-text-300"></i>
+					<i class="bi bi-pencil text-text-400"></i>
 				</button>
 			</div>
 			<div class="flex-grow w-full h-full overflow-y-scroll p-2.5 pb-52 pr-4 channelsScrollbar">
 				{#each $channels as channel}
-					<a
-						style="text-decoration: none;"
-						class="no-underline w-full text-text-100 rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-2.5 gap-2.5"
-						href="/channels/{channel.id}"
-					>
-						{#if channel.userChannelPermissions.length === 2}
-							<div class="aspect-square">
-								<Profile
-									nickname={getUserFromUsers(channel.userChannelPermissions)?.username}
-									status={'online'}
-								></Profile>
-							</div>
-						{/if}
-						<div class="w-full flex flex-col justify-center items-start">
-							<div class="flex justify-between items-center w-full">
-								<h2 class="max-w-44 overflow-hidden text-ellipsis text-lg">
-									{channel.userChannelPermissions.length === 2
-										? getUserFromUsers(channel.userChannelPermissions)?.nickname
-										: channel.name}
-								</h2>
-								{#if channel.lastMessageId}
-									<h2
-										class="text-text-300 right-0 text-right flex justify-end text-lg"
-										id={`${channel.id}-time`}
-									>
-										{#await libWhispr.getMessage(channel.id, channel.lastMessageId)}
-											<Placeholder maxWidth={40}></Placeholder>
-										{:then message}
-											{getTimeSince(new Date(message.createdAt).getTime())}
-										{/await}
+					{#if chatSearchString.length === 0 || (channel.userChannelPermissions.length === 2 && getUserFromUsers(channel.userChannelPermissions)?.nickname.includes(chatSearchString)) || channel.name?.includes(chatSearchString)}
+						<a
+							style="text-decoration: none;"
+							class="no-underline w-full text-text-100 rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-2.5 gap-2.5"
+							href="/channels/{channel.id}"
+						>
+							{#if channel.userChannelPermissions.length === 2}
+								<div class="aspect-square">
+									<Profile
+										nickname={getUserFromUsers(channel.userChannelPermissions)?.username}
+										status={'online'}
+									></Profile>
+								</div>
+							{/if}
+							<div class="w-full flex flex-col justify-center items-start">
+								<div class="flex justify-between items-center w-full">
+									<h2 class="max-w-44 overflow-hidden text-ellipsis text-lg">
+										{channel.userChannelPermissions.length === 2
+											? getUserFromUsers(channel.userChannelPermissions)?.nickname
+											: channel.name}
 									</h2>
+									{#if channel.lastMessageId}
+										<h2
+											class="text-text-400 right-0 text-right flex justify-end text-lg"
+											id={`${channel.id}-time`}
+										>
+											{#await libWhispr.getMessage(channel.id, channel.lastMessageId)}
+												<Placeholder maxWidth={40}></Placeholder>
+											{:then message}
+												{getTimeSince(new Date(message.createdAt).getTime())}
+											{/await}
+										</h2>
+									{/if}
+								</div>
+								{#if channel.lastMessageId}
+									{#await libWhispr.getMessage(channel.id, channel.lastMessageId) then message}
+										{#await libWhispr.decryptMessageContent(message.content.cipherText, message.author, message.content.encryptedSymmetricKey)}
+											<p
+												class="m-0 mt-1 text-text-400 text-ellipsis overflow-hidden whitespace-nowrap max-w-52"
+												id={`${channel.id}-message`}
+											>
+												<Placeholder maxWidth={200}></Placeholder>
+											</p>
+										{:then decryptedMessage}
+											<p
+												class="m-0 mt-1 text-text-400 text-ellipsis overflow-hidden whitespace-nowrap max-w-52"
+												id={`${channel.id}-message`}
+											>
+												{`${message.author.nickname}: ${decryptedMessage}`}
+											</p>
+										{/await}
+									{/await}
 								{/if}
 							</div>
-							{#if channel.lastMessageId}
-								{#await libWhispr.getMessage(channel.id, channel.lastMessageId) then message}
-									{#await libWhispr.decryptMessageContent(message.content.cipherText, message.author, message.content.encryptedSymmetricKey)}
-										<p
-											class="m-0 mt-1 text-text-300 text-ellipsis overflow-hidden whitespace-nowrap max-w-52"
-											id={`${channel.id}-message`}
-										>
-											<Placeholder maxWidth={200}></Placeholder>
-										</p>
-									{:then decryptedMessage}
-										<p
-											class="m-0 mt-1 text-text-300 text-ellipsis overflow-hidden whitespace-nowrap max-w-52"
-											id={`${channel.id}-message`}
-										>
-											{`${message.author.nickname}: ${decryptedMessage}`}
-										</p>
-									{/await}
-								{/await}
-							{/if}
-						</div>
-					</a>
-					<br />
+						</a>
+						<br />{/if}
 				{/each}
 			</div>
 			<div
@@ -467,7 +478,7 @@
 				{#if id !== '@self'}
 					{#await libWhispr.getChannel(id)}
 						<h2><Placeholder maxWidth={300}></Placeholder></h2>
-						<h3 class="text-text-300"><Placeholder maxWidth={200}></Placeholder></h3>
+						<h3 class="text-text-400"><Placeholder maxWidth={200}></Placeholder></h3>
 					{:then channel}
 						{#if channel.userChannelPermissions.length === 2}
 							<Profile
@@ -480,7 +491,7 @@
 								? getUserFromUsers(channel.userChannelPermissions)?.nickname
 								: channel.name}
 						</h2>
-						<h3 class="text-text-300">
+						<h3 class="text-text-400">
 							{`${
 								channel.userChannelPermissions.length === 2
 									? getUserFromUsers(channel.userChannelPermissions)?.username
@@ -490,24 +501,14 @@
 					{/await}
 				{/if}
 			</div>
-			<div class="flex-grow p-2.5 w-full flex flex-col-reverse overflow-y-scroll overflow-x-hidden">
-				{#each $messages as messageCluster}
-					<!-- profileUrl={messageCluster[messageCluster.length - 1].author.avatar} -->
-					<!-- <Message
-						date={new Date(messageCluster[0].createdAt)}
-						username={messageCluster[0].author.nickname}
-						sentByMe={messageCluster[0].author.id === $authedUser?.userId}
-						groupMessage={false}
-					>
-						{#each messageCluster as message}
-							<p class="message-p" class:emoji-large={emojiRegex.test(message.content)}>
-								<FormattedMessageContent content={message.content} />
-							</p>
-						{/each}
-					</Message> -->
+			<div
+				bind:this={chatElement}
+				class="flex-grow p-2.5 w-full flex flex-col overflow-y-scroll overflow-x-hidden"
+			>
+				{#each $messages.slice().reverse() as messageCluster}
 					<Message
 						side={messageCluster[0].author.id === $authedUser?.userId ? 'right' : 'left'}
-						messages={messageCluster}
+						messages={messageCluster.slice().reverse()}
 					></Message>
 				{/each}
 			</div>
@@ -521,6 +522,16 @@
 		</div>
 	</div>
 {:else}
+	<div
+		class="fixed top-0 bottom-0 left-0 right-0 bg-background-925 flex justify-center items-center flex-col p-4"
+	>
+		<WhisprLogoWhite></WhisprLogoWhite>
+		<h1 class="text-text-100 text-2xl text-center">
+			<FormattedMessageContent content="Mobile is currently under renovation. :construction:"
+			></FormattedMessageContent>
+		</h1>
+		<h2 class="text-text-400 text-xl text-center">Check back later or view on desktop :)</h2>
+	</div>
 	<!-- <div class="mobile">
 		{#if id === '@self'}
 			<div class="top">

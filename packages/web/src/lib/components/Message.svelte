@@ -108,7 +108,7 @@
 
 <div class="w-full flex flex-col" id="container">
 	<div
-		class="pt-2 pb-2 w-fit rounded-xl m-2 relative max-w-[800px] flex flex-col-reverse gap-1"
+		class="pt-2 pb-2 w-fit rounded-xl m-2 relative max-w-[800px] flex flex-col gap-1"
 		class:bg-background-700={side === 'left'}
 		class:rounded-es-none={side === 'left'}
 		class:bg-primary-600={side === 'right'}
@@ -122,7 +122,9 @@
 				on:focus={(e) => calculateContextMenuPosition(e, side)}
 				on:focusout={hideContextMenu}
 				role="listitem"
-				class="text-text-100 pl-2 pr-2 break-all"
+				class="text-text-100 pl-2 pr-2 break-all {side === 'right'
+					? 'selection:text-primary-600 selection:bg-text-100'
+					: ''}"
 				class:text-left={side === 'left'}
 				class:text-right={side === 'right'}
 			>

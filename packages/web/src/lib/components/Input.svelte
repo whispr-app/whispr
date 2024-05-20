@@ -37,7 +37,7 @@
 
 		{#if SLOTS.default}
 			<span
-				class="absolute inset-y-0 left-0 flex items-center pl-3 pr-2.5 bg-background-700 rounded-l-full"
+				class="absolute inset-y-0 left-0 flex items-center pl-3 pr-3 bg-background-700 rounded-full"
 				><slot /></span
 			>
 		{/if}
