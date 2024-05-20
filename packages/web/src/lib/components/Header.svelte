@@ -27,14 +27,6 @@
 </nav>
 
 <style lang="postcss">
-	:global(html) {
-		background-color: theme('colors.gray.900');
-	}
-
-	:global(body) {
-		position: relative;
-	}
-
 	.blur-mask {
 		mask-image: linear-gradient(rgb(0, 0, 0) 50%, rgba(0, 0, 0, 0.8) 70%, rgba(0, 0, 0, 0) 100%);
 

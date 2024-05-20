@@ -51,7 +51,7 @@
 				case 'top': {
 					offset = {
 						x: 0,
-						y: -rect.height / 2 - 16 - tooltipEl.clientHeight / 2,
+						y: -rect.height / 2 - 16 - tooltipEl.clientHeight / 2 + 5,
 						type: 'top'
 					};
 					break;
@@ -59,14 +59,14 @@
 				case 'bottom': {
 					offset = {
 						x: 0,
-						y: rect.height / 2 + 16 + tooltipEl.clientHeight / 2,
+						y: rect.height / 2 + 16 + tooltipEl.clientHeight / 2 - 5,
 						type: 'bottom'
 					};
 					break;
 				}
 				case 'left': {
 					offset = {
-						x: -rect.width / 2 - 16 - tooltipEl.clientWidth / 2,
+						x: -rect.width / 2 - 16 - tooltipEl.clientWidth / 2 + 5,
 						y: 0,
 						type: 'left'
 					};
@@ -74,7 +74,7 @@
 				}
 				case 'right': {
 					offset = {
-						x: rect.width / 2 + 16 + tooltipEl.clientWidth / 2,
+						x: rect.width / 2 + 16 + tooltipEl.clientWidth / 2 - 5,
 						y: 0,
 						type: 'right'
 					};
@@ -143,16 +143,16 @@
 </div>
 
 <style lang="postcss">
-	.top {
-		@apply after:top-[calc(100%-1px)] after:left-1/2 after:-ml-2 after:border-t-background-925 after:border-b-transparent after:border-l-transparent after:border-r-transparent;
+	.top::after {
+		@apply top-[calc(100%-1px)] left-1/2 -ml-2 border-t-background-925 border-b-transparent border-l-transparent border-r-transparent;
 	}
-	.bottom {
-		@apply after:bottom-[calc(100%-1px)] after:left-1/2 after:-ml-2 after:border-b-background-925 after:border-t-transparent after:border-l-transparent after:border-r-transparent;
+	.bottom::after {
+		@apply bottom-[calc(100%-1px)] left-1/2 -ml-2 border-b-background-925 border-t-transparent border-l-transparent border-r-transparent;
 	}
-	.left {
-		@apply after:top-1/2 after:-mt-2 after:left-[calc(100%-1px)] after:border-l-background-925 after:border-t-transparent after:border-b-transparent after:border-r-transparent;
+	.left::after {
+		@apply top-1/2 -mt-2 left-[calc(100%-1px)] border-l-background-925 border-t-transparent border-b-transparent border-r-transparent;
 	}
-	.right {
-		@apply after:top-1/2 after:-mt-2 after:right-[calc(100%-1px)] after:border-r-background-925 after:border-t-transparent after:border-b-transparent after:border-l-transparent;
+	.right::after {
+		@apply top-1/2 -mt-2 right-[calc(100%-1px)] border-r-background-925 border-t-transparent border-b-transparent border-l-transparent;
 	}
 </style>

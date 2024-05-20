@@ -32,7 +32,7 @@
 	{#if highlightError && errorMessage}
 		<p class="text-red-500 m-0 mb-2 relative top-0 w-full max-w-[418px]">{errorMessage}</p>
 	{/if}
-	<label class="relative block">
+	<label class="relative block w-full">
 		<span class="sr-only">{type}</span>
 
 		{#if SLOTS.default}
@@ -49,9 +49,10 @@
 			bind:value
 			on:change={change}
 			on:input={input}
-			class="transition-all ease-in-out text-text-100 p-2 block w-full placeholder:text-text-400 pl-12 pr-4 bg-background-800 rounded-full outline-none focus:ring-2 focus:ring-background-400 {highlightError
+			class="transition-all ease-in-out text-text-100 p-2 block w-full placeholder:text-text-400 px-4 bg-background-800 rounded-full outline-none focus:ring-2 focus:ring-background-400 {highlightError
 				? 'focus:ring-red-500'
 				: ''}"
+			class:pl-12={!!SLOTS.default}
 			name={id}
 		/>
 		{#if type === 'password'}

@@ -9,12 +9,16 @@
 	import { writable, type Writable } from 'svelte/store';
 	import { GatewayServerEvent, OpCode } from '@whispr/types';
 	import Input from '$lib/components/Input.svelte';
-	import Message from '$lib/components/Message.svelte';
+	import MessageOld from '$lib/components/MessageOld.svelte';
 	import MockText from '$lib/components/MockText.svelte';
 	import Profile from '$lib/components/Profile.svelte';
 	import Settings from '$lib/components/Settings.svelte';
 	import WhisprLogoWhite from '$lib/components/whispr-logo-white.svelte';
 	import FormattedMessageContent from '$lib/components/FormattedMessageContent.svelte';
+	import Placeholder from '$lib/components/Placeholder.svelte';
+	import TextArea from '$lib/components/TextArea.svelte';
+	import Message from '$lib/components/Message.svelte';
+	import TooltipContainer from '$lib/components/TooltipContainer.svelte';
 
 	$: mobile = navigator.userAgent.match(/Mobi/);
 
@@ -187,38 +191,36 @@
 		messages.set(_messages);
 
 		if (mounted && id !== '@self') {
-			libWhispr
-				.fetchMessages(id)
-				.then(async (response) => {
-					for (const msg of response.reverse()) {
-						const content = await libWhispr.decryptMessageContent(
-							msg.content.cipherText,
-							msg.author,
-							msg.content.encryptedSymmetricKey
-						);
+			libWhispr.fetchMessages(id).then(async (response) => {
+				for (const msg of response.reverse()) {
+					const content = await libWhispr.decryptMessageContent(
+						msg.content.cipherText,
+						msg.author,
+						msg.content.encryptedSymmetricKey
+					);
 
-						msg.content = content;
+					msg.content = content;
 
-						const lastMessageCluster = _messages[0];
+					const lastMessageCluster = _messages[0];
 
-						if (
-							lastMessageCluster &&
-							lastMessageCluster[0].author.id === msg.author.id &&
-							new Date(msg.createdAt).getTime() -
-								new Date(lastMessageCluster[0].createdAt).getTime() <
-								300000
-						) {
-							lastMessageCluster.unshift(msg);
-						} else {
-							_messages.unshift([msg]);
-						}
+					if (
+						lastMessageCluster &&
+						lastMessageCluster[0].author.id === msg.author.id &&
+						new Date(msg.createdAt).getTime() -
+							new Date(lastMessageCluster[0].createdAt).getTime() <
+							300000
+					) {
+						lastMessageCluster.unshift(msg);
+					} else {
+						_messages.unshift([msg]);
 					}
-					messages.set(_messages);
-				})
-				.then(() => {
-					chatElement?.scrollTo(0, chatElement.scrollHeight);
-					console.log(chatElement?.scrollHeight, chatElement?.scrollTop);
-				});
+				}
+				messages.set(_messages);
+			});
+			// .then(() => {
+			// 	chatElement?.scrollTo(0, chatElement.scrollHeight);
+			// 	console.log(chatElement?.scrollHeight, chatElement?.scrollTop);
+			// });
 		}
 	}
 
@@ -362,55 +364,68 @@
 {/if}
 
 {#if !mobile}
+	<TooltipContainer></TooltipContainer>
 	<Settings open={settingsOpen} on:close={() => (settingsOpen = false)}></Settings>
-	<div class="top">
-		<div class="side-bar">
-			<div class="options">
-				<div style="flex: 1; display: flex; justify-content: center;">
+	<div class="flex flex-row h-dvh justify-center">
+		<div class="w-80 min-w-80 h-dvh bg-background-900 flex flex-col items-center relative">
+			<div class="h-10 my-2.5 px-2.5 w-full flex justify-end items-center gap-2.5">
+				<div class="flex flex-1 justify-start">
 					<WhisprLogoWhite></WhisprLogoWhite>
 				</div>
 				<Profile nickname={$authedUser?.username} status={'online'}></Profile>
-				<button on:click={() => (settingsOpen = true)} class="button-bg">
-					<i class="bi bi-gear-wide-connected"></i>
+				<button
+					on:click={() => (settingsOpen = true)}
+					class="rounded-full bg-background-800 text-text-100 hover:bg-background-700 aspect-square h-full flex justify-center items-center"
+				>
+					<i class="bi bi-gear-wide-connected mt-[2px] scale-[1.75]"></i>
 					<!-- <i class="bi bi-box-arrow-right"></i> -->
 				</button>
 				<!-- <button>
 				<i class="bi bi-gear"></i>
 			</button> -->
 			</div>
-			<div class="chats-options">
+			<div class="px-2.5 h-10 mb-2.5 pt-0 flex justify-center items-center gap-2.5 w-full">
 				<Input bind:value={chatSearchString} placeholder="Search chats"
-					><i class="bi bi-search"></i></Input
+					><i class="bi bi-search text-text-300"></i></Input
 				>
 				<button
-					class="new-chat"
+					class="h-full aspect-square rounded-full flex justify-center items-center bg-background-800 hover:bg-background-700"
 					on:click={() => {
 						createChannelModalOpen = true;
 					}}
 				>
-					<i class="bi bi-pencil"></i>
+					<i class="bi bi-pencil text-text-300"></i>
 				</button>
 			</div>
-			<div class="chats">
+			<div class="flex-grow w-full h-full overflow-y-scroll p-2.5 pb-52 pr-4 channelsScrollbar">
 				{#each $channels as channel}
-					<a href="/channels/{channel.id}">
+					<a
+						style="text-decoration: none;"
+						class="no-underline w-full text-text-100 rounded-lg hover:bg-background-800 flex flex-row justify-start items-center p-2.5 gap-2.5"
+						href="/channels/{channel.id}"
+					>
 						{#if channel.userChannelPermissions.length === 2}
-							<Profile
-								nickname={getUserFromUsers(channel.userChannelPermissions)?.username}
-								status={'online'}
-							></Profile>
+							<div class="aspect-square">
+								<Profile
+									nickname={getUserFromUsers(channel.userChannelPermissions)?.username}
+									status={'online'}
+								></Profile>
+							</div>
 						{/if}
-						<div class="chat-content">
-							<div class="name-and-time">
-								<h2 class="name">
+						<div class="w-full flex flex-col justify-center items-start">
+							<div class="flex justify-between items-center w-full">
+								<h2 class="max-w-44 overflow-hidden text-ellipsis text-lg">
 									{channel.userChannelPermissions.length === 2
 										? getUserFromUsers(channel.userChannelPermissions)?.nickname
 										: channel.name}
 								</h2>
 								{#if channel.lastMessageId}
-									<h2 class="time" id={`${channel.id}-time`}>
+									<h2
+										class="text-text-300 right-0 text-right flex justify-end text-lg"
+										id={`${channel.id}-time`}
+									>
 										{#await libWhispr.getMessage(channel.id, channel.lastMessageId)}
-											<MockText style="height: 20px; width: 40px;" />
+											<Placeholder maxWidth={40}></Placeholder>
 										{:then message}
 											{getTimeSince(new Date(message.createdAt).getTime())}
 										{/await}
@@ -420,11 +435,17 @@
 							{#if channel.lastMessageId}
 								{#await libWhispr.getMessage(channel.id, channel.lastMessageId) then message}
 									{#await libWhispr.decryptMessageContent(message.content.cipherText, message.author, message.content.encryptedSymmetricKey)}
-										<p id={`${channel.id}-message`}>
-											<MockText style="height: 20px; width: 100px;" />.
+										<p
+											class="m-0 mt-1 text-text-300 text-ellipsis overflow-hidden whitespace-nowrap max-w-52"
+											id={`${channel.id}-message`}
+										>
+											<Placeholder maxWidth={200}></Placeholder>
 										</p>
 									{:then decryptedMessage}
-										<p id={`${channel.id}-message`}>
+										<p
+											class="m-0 mt-1 text-text-300 text-ellipsis overflow-hidden whitespace-nowrap max-w-52"
+											id={`${channel.id}-message`}
+										>
 											{`${message.author.nickname}: ${decryptedMessage}`}
 										</p>
 									{/await}
@@ -435,14 +456,18 @@
 					<br />
 				{/each}
 			</div>
-			<div class="fade-out"></div>
+			<div
+				class="absolute bottom-0 left-0 right-0 h-52 backdrop-blur-lg blur-mask pointer-events-none z-1 bg-background-900 bg-opacity-50"
+			></div>
 		</div>
-		<div class="main">
-			<div class="top-bar">
+		<div class="flex-grow h-dvh flex flex-col w-full">
+			<div
+				class="w-full h-16 min-h-16 bg-background-925 pl-4 flex justify-start items-center gap-2"
+			>
 				{#if id !== '@self'}
 					{#await libWhispr.getChannel(id)}
-						<h2><MockText style="height: 20px; width: 300px;" /></h2>
-						<h3 class="handle"><MockText style="height: 20px; width: 200px;" /></h3>
+						<h2><Placeholder maxWidth={300}></Placeholder></h2>
+						<h3 class="text-text-300"><Placeholder maxWidth={200}></Placeholder></h3>
 					{:then channel}
 						{#if channel.userChannelPermissions.length === 2}
 							<Profile
@@ -450,12 +475,12 @@
 								status={'online'}
 							></Profile>
 						{/if}
-						<h2>
+						<h2 class="text-text-100 font-normal">
 							{channel.userChannelPermissions.length === 2
 								? getUserFromUsers(channel.userChannelPermissions)?.nickname
 								: channel.name}
 						</h2>
-						<h3 class="handle">
+						<h3 class="text-text-300">
 							{`${
 								channel.userChannelPermissions.length === 2
 									? getUserFromUsers(channel.userChannelPermissions)?.username
@@ -465,10 +490,10 @@
 					{/await}
 				{/if}
 			</div>
-			<div class="chat">
+			<div class="flex-grow p-2.5 w-full flex flex-col-reverse overflow-y-scroll overflow-x-hidden">
 				{#each $messages as messageCluster}
 					<!-- profileUrl={messageCluster[messageCluster.length - 1].author.avatar} -->
-					<Message
+					<!-- <Message
 						date={new Date(messageCluster[0].createdAt)}
 						username={messageCluster[0].author.nickname}
 						sentByMe={messageCluster[0].author.id === $authedUser?.userId}
@@ -479,36 +504,24 @@
 								<FormattedMessageContent content={message.content} />
 							</p>
 						{/each}
-					</Message>
+					</Message> -->
+					<Message
+						side={messageCluster[0].author.id === $authedUser?.userId ? 'right' : 'left'}
+						messages={messageCluster}
+					></Message>
 				{/each}
 			</div>
-			<div class="chat-bar">
+			<div class="w-full h-fit p-2.5 flex justify-center items-center gap-2.5">
 				{#if id !== '@self'}
 					{#await libWhispr.getChannel(id) then channel}
-						<form on:submit|preventDefault={sendMessage}>
-							<Input
-								type="text"
-								bind:value={message}
-								autocomplete="off"
-								placeholder={`Message ${
-									channel.userChannelPermissions.length === 2
-										? getUserFromUsers(channel.userChannelPermissions)?.nickname
-										: channel.name
-								}`}
-							>
-								<!-- <i class="bi bi-paperclip icon"></i> -->
-							</Input>
-							<button>
-								<i class="bi bi-send"></i>
-							</button>
-						</form>
+						<TextArea bind:value={message} on:submit={sendMessage}></TextArea>
 					{/await}
 				{/if}
 			</div>
 		</div>
 	</div>
 {:else}
-	<div class="mobile">
+	<!-- <div class="mobile">
 		{#if id === '@self'}
 			<div class="top">
 				<div class="chats-options">
@@ -596,7 +609,7 @@
 				</div>
 				<div bind:this={chatElement} class="chat">
 					{#each $messages as messageCluster}
-						<!-- profileUrl={messageCluster[messageCluster.length - 1].author.avatar} -->
+						profileUrl={messageCluster[messageCluster.length - 1].author.avatar}
 						<Message
 							date={new Date(messageCluster[0].createdAt)}
 							username={messageCluster[0].author.nickname}
@@ -625,7 +638,6 @@
 											: channel.name
 									}`}
 								>
-									<!-- <i class="bi bi-paperclip icon"></i> -->
 								</Input>
 								<button>
 									<i class="bi bi-send"></i>
@@ -636,5 +648,25 @@
 				</div>
 			</div>
 		{/if}
-	</div>
+	</div> -->
 {/if}
+
+<style lang="postcss">
+	.blur-mask {
+		mask-image: linear-gradient(0deg, rgb(0, 0, 0) 20%, rgba(0, 0, 0, 0) 100%);
+
+		-webkit-mask-image: linear-gradient(0deg, rgb(0, 0, 0) 20%, rgba(0, 0, 0, 0) 100%);
+	}
+
+	:global(html) {
+		overflow: hidden;
+	}
+
+	.channelsScrollbar::-webkit-scrollbar-thumb {
+		background-color: theme('colors.background.700');
+	}
+
+	.channelsScrollbar {
+		scrollbar-color: theme('colors.background.700') rgba(0, 0, 0, 0);
+	}
+</style>

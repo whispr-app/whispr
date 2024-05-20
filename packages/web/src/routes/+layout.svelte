@@ -115,4 +115,25 @@
 	:global(a):hover {
 		text-decoration-line: underline;
 	}
+
+	:global(*) {
+		scrollbar-width: thin;
+		scrollbar-color: theme('colors.background.800') rgba(0, 0, 0, 0);
+	}
+
+	:global(*)::-webkit-scrollbar {
+		width: 14px;
+		height: 14px;
+	}
+
+	:global(*)::-webkit-scrollbar-thumb {
+		background-color: theme('colors.background.800');
+		border: 4px solid rgba(0, 0, 0, 0);
+		background-clip: padding-box;
+		border-radius: 9999px;
+	}
+
+	:global(*)::-webkit-scrollbar-track {
+		background-color: rgba(0, 0, 0, 0);
+	}
 </style>

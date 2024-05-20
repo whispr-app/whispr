@@ -1,6 +1,7 @@
 import adapter from '@sveltejs/adapter-static';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import autoprefixer from 'autoprefixer';
+// import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import preprocess from 'svelte-preprocess';
+// import autoprefixer from 'autoprefixer';
 import { transformSync } from 'esbuild';
 import browserslist from 'browserslist';
 import fs from 'fs';
@@ -29,34 +30,34 @@ const esbuildTargets = list
 const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
 	// for more information about preprocessors
-	preprocess: vitePreprocess({
-		postcss: {
-			plugins: [autoprefixer()]
-		},
-		typescript({ content, filename }) {
-			const { code, map } = transformSync(content, {
-				loader: 'ts',
-				format: 'esm',
-				charset: 'utf8',
-				color: true,
-				treeShaking: false,
-				target: esbuildTargets,
-				keepNames: true,
-				sourcefile: filename,
-				tsconfigRaw: {
-					compilerOptions: {
-						preserveValueImports: true
+	preprocess: [
+		preprocess({
+			postcss: true,
+			typescript({ content, filename }) {
+				const { code, map } = transformSync(content, {
+					loader: 'ts',
+					format: 'esm',
+					charset: 'utf8',
+					color: true,
+					treeShaking: false,
+					target: esbuildTargets,
+					keepNames: true,
+					sourcefile: filename,
+					tsconfigRaw: {
+						compilerOptions: {
+							preserveValueImports: true
+						}
+					},
+					define: {
+						'process.env.PREPROCESSING': 'true',
+						PREPROCESSING: 'true'
 					}
-				},
-				define: {
-					'process.env.PREPROCESSING': 'true',
-					PREPROCESSING: 'true'
-				}
-			});
-			return { code, map };
-		},
-		sourceMap: true
-	}),
+				});
+				return { code, map };
+			},
+			sourceMap: true
+		})
+	],
 
 	kit: {
 		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
