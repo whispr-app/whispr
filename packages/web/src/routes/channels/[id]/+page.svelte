@@ -474,6 +474,9 @@
 			<div
 				class="absolute bottom-0 left-0 right-0 h-52 backdrop-blur-lg blur-mask pointer-events-none z-1 bg-background-900 bg-opacity-50"
 			></div>
+			<div
+				class="absolute bottom-0 left-0 right-0 h-52 pointer-events-none z-2 bg-gradient-to-t from-background-900 bg-opacity-50"
+			></div>
 		</div>
 		<div class="flex-grow h-dvh flex flex-col w-full">
 			<div
