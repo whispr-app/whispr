@@ -677,7 +677,7 @@
 	}
 
 	:global(html) {
-		overflow: hidden;
+		overflow-x: hidden;
 	}
 
 	.channelsScrollbar::-webkit-scrollbar-thumb {
