@@ -1,6 +1,6 @@
 {
   "name": "@whispr/api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Decentralised server instance",
   "main": "src/index.ts",
   "type": "module",
