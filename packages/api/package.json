@@ -2,8 +2,30 @@
   "name": "@whispr/api",
   "version": "0.1.1",
   "description": "Decentralised server instance",
-  "main": "src/index.ts",
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/whispr-app/whispr/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/whispr-app/whispr",
+    "directory": "packages/api"
+  },
+  "author": "Morgan Dilling",
+  "source": "src/index.ts",
   "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.mjs"
+    }
+  },
   "scripts": {
     "dev": "nodemon --watch . -e ts,json,env --exec \"pnpm build:esm && NODE_ENV=development node dist/index.mjs\"",
     "dev:windows": "nodemon --watch . -e ts,json,env --exec \"pnpm build:esm && set NODE_ENV=development && node dist/index.mjs\"",
@@ -17,8 +39,21 @@
     "prisma:studio": "pnpm exec prisma studio",
     "prisma:reset": "esbuild --platform=node --format=esm --bundle --packages=external ./scripts/prismaReset.ts | node"
   },
-  "keywords": [],
-  "author": "Morgan Dilling",
+  "dependencies": {
+    "@3xpo/fetch-prisma": "^0.1.4",
+    "@prisma/client": "^5.10.2",
+    "@whispr/types": "workspace:^",
+    "@whispr/web": "workspace:^",
+    "axios": "^1.6.7",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-ws": "^5.0.2",
+    "mime-types": "^2.1.35",
+    "response-time": "^2.3.2",
+    "ws": "^8.16.0",
+    "zod": "^3.22.4"
+  },
   "devDependencies": {
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.17",
@@ -38,20 +73,5 @@
     "prisma": "^5.10.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "@3xpo/fetch-prisma": "^0.1.4",
-    "@prisma/client": "^5.10.2",
-    "@whispr/types": "workspace:^",
-    "@whispr/web": "workspace:^",
-    "axios": "^1.6.7",
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "express-ws": "^5.0.2",
-    "mime-types": "^2.1.35",
-    "response-time": "^2.3.2",
-    "ws": "^8.16.0",
-    "zod": "^3.22.4"
   }
 }

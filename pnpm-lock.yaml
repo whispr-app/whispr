@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@3xpo/pkgmetatool':
+        specifier: ^0.1.8
+        version: 0.1.8
       '@nx/js':
         specifier: 18.0.4
         version: 18.0.4(@types/node@20.11.20)(nx@18.0.4)(typescript@5.3.3)
@@ -247,6 +250,11 @@ packages:
       '@3xpo/universalify': 2.0.4
       graceful-fs: 4.2.11
     dev: false
+
+  /@3xpo/pkgmetatool@0.1.8:
+    resolution: {integrity: sha512-Z2LQDhRerSKAAC/t7WWAeLXHZ21vXd+BKUnVmun1mhy8H+2xWS3ci0lIwn1km6Fa3uiYakWqt1LXY1v8i7E/hw==}
+    engines: {node: '>=v20.0.0'}
+    dev: true
 
   /@3xpo/universalify@2.0.4:
     resolution: {integrity: sha512-Ogz8gf8teOLIHR2jXLAB1aFKLkM5YKQz9oFcyKrvZMiJP7fBCKdagptF4OlcHBSb1pJC0G7RnJZVJaR0hcnCJQ==}

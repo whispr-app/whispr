@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nx run-many -t dev --parallel=8192",
-    "build": "nx run-many -t build --parallel=8192 && concurrently \"npm:build:*\"",
+    "build": "./contrib/normalisePkgs.mjs && nx run-many -t build --parallel=8192 && concurrently \"npm:build:*\"",
     "build:mjs": "esbuild packages/api/dist/index.mjs --bundle --format=esm --platform=node --outfile=dist/bundle.mjs --sourcemap",
     "build:cjs": "esbuild packages/api/dist/index.mjs --bundle --format=cjs --platform=node --outfile=dist/bundle.cjs --sourcemap",
     "prisma:update": "nx run @whispr/api:prisma:update",
@@ -14,6 +14,7 @@
   },
   "private": true,
   "devDependencies": {
+    "@3xpo/pkgmetatool": "^0.1.8",
     "@nx/js": "18.0.4",
     "concurrently": "^8.2.2",
     "esbuild": "0.20.1",

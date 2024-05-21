@@ -1,60 +1,68 @@
 {
-	"name": "@whispr/web",
-	"version": "0.1.1",
-	"author": "Morgan Dilling",
-	"scripts": {
-		"dev": "node ./scripts/viteDevStripArgs.mjs",
-		"build": "vite build && node ./scripts/postprocess.mjs",
-		"preview": "vite preview",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
-	},
-	"types": "build/out.d.ts",
-	"main": "build/out.mjs",
-	"module": "build/out.mjs",
-	"exports": {
-		".": {
-			"types": "./build/out.d.ts",
-			"import": "./build/out.mjs",
-			"default": "./build/out.mjs"
-		}
-	},
-	"devDependencies": {
-		"@openpgp/web-stream-tools": "0.0.11-patch-0",
-		"@sveltejs/adapter-auto": "^3.1.1",
-		"@sveltejs/adapter-static": "^3.0.1",
-		"@sveltejs/kit": "^2.5.1",
-		"@sveltejs/vite-plugin-svelte": "^3.0.2",
-		"@types/eslint": "8.56.2",
-		"@types/node": "^20.11.20",
-		"@typescript-eslint/eslint-plugin": "^7.0.2",
-		"@typescript-eslint/parser": "^7.0.2",
-		"autoprefixer": "^10.4.17",
-		"browserslist": "^4.23.0",
-		"esbuild": "0.20.1",
-		"eslint": "^8.56.0",
-		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-svelte": "^2.35.1",
-		"mime-types": "^2.1.35",
-		"postcss": "^8.4.38",
-		"postcss-load-config": "^5.1.0",
-		"prettier": "^3.2.5",
-		"prettier-plugin-svelte": "^3.2.1",
-		"querymimedb": "^0.1.9",
-		"svelte": "^4.2.11",
-		"svelte-check": "^3.6.4",
-		"svelte-preprocess": "^5.1.3",
-		"tailwindcss": "^3.4.3",
-		"tslib": "^2.6.2",
-		"typescript": "^5.3.3",
-		"vite": "^5.1.4"
-	},
-	"type": "module",
-	"dependencies": {
-		"@whispr/types": "workspace:^",
-		"axios": "^1.6.7",
-		"openpgp": "^5.11.0"
-	}
+  "name": "@whispr/web",
+  "version": "0.1.1",
+  "bugs": {
+    "url": "https://github.com/whispr-app/whispr/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/whispr-app/whispr",
+    "directory": "packages/web"
+  },
+  "author": "Morgan Dilling",
+  "type": "module",
+  "module": "build/out.mjs",
+  "types": "build/out.d.ts",
+  "typings": "build/out.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/out.d.ts",
+      "import": "./build/out.mjs",
+      "default": "./build/out.mjs"
+    }
+  },
+  "scripts": {
+    "dev": "node ./scripts/viteDevStripArgs.mjs",
+    "build": "vite build && node ./scripts/postprocess.mjs",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@whispr/types": "workspace:^",
+    "axios": "^1.6.7",
+    "openpgp": "^5.11.0"
+  },
+  "devDependencies": {
+    "@openpgp/web-stream-tools": "0.0.11-patch-0",
+    "@sveltejs/adapter-auto": "^3.1.1",
+    "@sveltejs/adapter-static": "^3.0.1",
+    "@sveltejs/kit": "^2.5.1",
+    "@sveltejs/vite-plugin-svelte": "^3.0.2",
+    "@types/eslint": "8.56.2",
+    "@types/node": "^20.11.20",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "autoprefixer": "^10.4.17",
+    "browserslist": "^4.23.0",
+    "esbuild": "0.20.1",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-svelte": "^2.35.1",
+    "mime-types": "^2.1.35",
+    "postcss": "^8.4.38",
+    "postcss-load-config": "^5.1.0",
+    "prettier": "^3.2.5",
+    "prettier-plugin-svelte": "^3.2.1",
+    "querymimedb": "^0.1.9",
+    "svelte": "^4.2.11",
+    "svelte-check": "^3.6.4",
+    "svelte-preprocess": "^5.1.3",
+    "tailwindcss": "^3.4.3",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4"
+  }
 }
