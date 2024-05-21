@@ -15,7 +15,7 @@
 <Header />
 <div class="w-full flex justify-center items-center">
 	<div
-		class="rounded-full text-orange-400 border-orange-400 bg-orange-500 bg-opacity-10 border-2 pl-2 pr-2 w-fit h-fit text-center"
+		class="rounded-full text-orange-400 border-orange-400 bg-orange-500 bg-opacity-10 border-2 pl-2 pr-2 h-fit text-center"
 	>
 		<FormattedMessageContent
 			content=":warning: WARNING! Whispr is currently in development and very much in an unfinished state. Data is

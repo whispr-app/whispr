@@ -115,23 +115,21 @@
 		class:rounded-ee-none={side === 'right'}
 		class:place-self-end={side === 'right'}
 	>
-		{#each messages as message}
-			<p
+		{#each messages as message}<p
 				on:mouseover={(e) => calculateContextMenuPosition(e, side)}
 				on:mouseleave={hideContextMenu}
 				on:focus={(e) => calculateContextMenuPosition(e, side)}
 				on:focusout={hideContextMenu}
 				role="listitem"
-				class="text-text-100 pl-2 pr-2 break-all {side === 'right'
+				class="text-text-100 pl-2 m-0 whitespace-pre-wrap pr-2 break-all {side === 'right'
 					? 'selection:text-primary-600 selection:bg-text-100'
 					: ''}"
 				class:text-left={side === 'left'}
 				class:text-right={side === 'right'}
 			>
-				{#if message.quote}
-					<div>
-						<span class="inline-flex"><i class="bi bi-quote scale-125 opacity-60"></i></span>
-						<span class="inline-flex flex-row justify-center items-center"
+				{#if message.quote}<div>
+						<span class="inline-flex"><i class="bi bi-quote scale-125 opacity-60"></i></span><span
+							class="inline-flex flex-row justify-center items-center"
 							><img
 								src="https://ui-avatars.com/api/?name={message.quote.author
 									.username}&background=ffffff&color=7d8590&length=1&size=256&bold=true"
@@ -141,58 +139,42 @@
 								class="text-text-100 opacity-60 font-semibold hover:underline scale-100 translate-y-[2px]"
 								>{message.quote.author.username}:</button
 							></span
-						>
-						<span
+						><span
 							><button class="text-text-100 opacity-60 hover:opacity-90 max-w-52 truncate"
 								><FormattedMessageContent content={message.quote.content}
 								></FormattedMessageContent></button
 							></span
 						>
-					</div>
-				{/if}
-				<FormattedMessageContent content={message.content}></FormattedMessageContent>
-				{#if message.edited}
-					<span
+					</div>{/if}<FormattedMessageContent content={message.content}
+				></FormattedMessageContent>{#if message.edited}<span
 						class="inline-flex flex-row justify-center items-center translate-y-0.5"
 						data-tooltip={`Edited ${new Date(message.edited)?.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })}`}
 						><i class="bi bi-pencil-fill opacity-60 scale-90 inline-flex"></i></span
-					>
-				{/if}
-				{#if message.reactions}
-					<div
+					>{/if}{#if message.reactions}<div
 						class:justify-end={side === 'right'}
 						class:flex-row-reverse={side === 'right'}
 						class="flex flex-row gap-1 items-center flex-wrap group"
 					>
-						{#each message.reactions as reaction}
-							<button
+						{#each message.reactions as reaction}<button
 								data-tooltip={`${reaction.users
 									.map((u) => u.username)
 									.join(', ')
 									.replace(/\,(?=[^,]*$)/, ' &')} reacted with ${reaction.emoji}`}
 								class={`${reaction.reacted ? 'border-background-100 bg-background-100' : 'border-background-300 bg-background-300 hover:border-background-100 hover:border-opacity-40'} transition-colors flex p-0.5 flex-row items-center gap-1 rounded-full border-2 border-opacity-40 bg-opacity-30 pl-1.5 pr-1.5 w-fit h-fit`}
-							>
-								{#each reaction.users as user}
-									<img
+								>{#each reaction.users as user}<img
 										src="https://ui-avatars.com/api/?name={user.username}&background=ffffff&color=7d8590&length=1&size=256&bold=true"
 										alt="profile"
 										class="aspect-square h-3.5 rounded-full inline-block"
-									/>
-								{/each}
-								<span class="text-text-100 text-[0.85rem] h-full">
-									<i class="twa twa-{fetchEmoji(reaction.emoji)}"></i>
-								</span>
-							</button>
-						{/each}
-						<button
+									/>{/each}<span class="text-text-100 text-[0.85rem] h-full"
+									><i class="twa twa-{fetchEmoji(reaction.emoji)}"></i></span
+								></button
+							>{/each}<button
 							data-tooltip="Add Reaction"
 							class="transition-opacity scale-110 hidden group-hover:inline-block material-symbols-outlined opacity-80 hover:opacity-100"
 							>add_reaction</button
 						>
-					</div>
-				{/if}
-			</p>
-		{/each}
+					</div>{/if}
+			</p>{/each}
 		<div
 			on:mouseleave={hideContextMenu}
 			on:focusout={hideContextMenu}
@@ -206,28 +188,22 @@
 				><i class="material-symbols-outlined scale-100 flex justify-center items-center"
 					>add_reaction</i
 				></button
-			>
-			<button
+			><button
 				data-tooltip="Quote"
 				class="transition-colors h-full aspect-square p-2 bg-transparent hover:bg-background-800 flex justify-center items-center"
 				><i class="bi bi-quote scale-125 flex justify-center items-center translate-y-[1px]"
 				></i></button
-			>
-			{#if side === 'right'}
-				<button
+			>{#if side === 'right'}<button
 					data-tooltip="Edit"
 					class="transition-colors h-full aspect-square p-2 bg-transparent hover:bg-background-800 flex justify-center items-center"
 					><i class="bi bi-pencil-fill flex justify-center items-center"></i></button
-				>
-				<button
+				><button
 					data-tooltip="Delete"
 					class="transition-colors h-full aspect-square p-2 bg-transparent hover:bg-background-800 flex justify-center items-center group"
 					><i
 						class="bi bi-trash-fill flex justify-center items-center group-hover:text-red-500 transition-colors"
 					></i></button
-				>
-			{/if}
-			<button
+				>{/if}<button
 				data-tooltip="More Options"
 				class="transition-colors h-full aspect-square p-2 bg-transparent hover:bg-background-800 flex justify-center items-center"
 				><i class="bi bi-three-dots-vertical flex justify-center items-center"></i></button
