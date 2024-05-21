@@ -25,7 +25,7 @@
 </div>
 <section class="w-vw py-72 text-center flex justify-center items-center flex-col">
 	<h1 class="text-text-100 text-6xl inline-block w-fit">
-		The best communications app for <h1 class="inline-block text-primary-500">privacy.</h1>
+		The best communications app for <span class="inline-block text-primary-500">privacy.</span>
 	</h1>
 	<h2 class="text-text-400 mt-3 text-5xl w-fit">
 		<FormattedMessageContent content="At least we think so. :winking-face:"
