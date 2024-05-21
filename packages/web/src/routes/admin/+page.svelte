@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/components/Button.svelte';
 	import { authedUser, libWhispr } from '$lib/libWhispr';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
@@ -89,24 +90,24 @@
 	};
 </script>
 
-<main>
-	<h1>Admin</h1>
+<main class="text-text-100">
+	<h1 class="text-3xl font-medium">Admin</h1>
 	<a href="/channels/@self">App</a>
-	<h2>KeyGen</h2>
-	<form on:submit|preventDefault={generateKeys}>
+	<h2 class="text-2xl">KeyGen</h2>
+	<form on:submit|preventDefault>
 		<label for="nKeys"> Number of keys </label>
-		<input id="nKeys" type="number" bind:value={nKeys} />
+		<input class="text-black p-2" id="nKeys" type="number" bind:value={nKeys} />
 		<label for="nUses"> Number of uses per key </label>
-		<input id="nUses" type="number" bind:value={numberOfUses} />
-		<button type="submit">Generate</button>
+		<input class="text-black p-2" id="nUses" type="number" bind:value={numberOfUses} />
+		<Button on:click={generateKeys}>Generate</Button>
 	</form>
 	<pre>
     {#each $keys as key}
 			{key}<br />
 		{/each}
   </pre>
-	<h3>Existing Keys</h3>
-	<button on:click={fetchKeys}>Fetch</button>
+	<h3 class="text-xl">Existing Keys</h3>
+	<Button on:click={fetchKeys}>Fetch</Button>
 	{#if $fetchedKeys.length > 0}
 		<table>
 			<thead>
@@ -147,12 +148,12 @@
 							</table>
 						</td>
 						<td
-							><button
+							><Button
 								on:click={() => {
 									deleteKey(key.key).then(() => {
 										fetchKeys();
 									});
-								}}><i class="bi bi-trash-fill danger"></i></button
+								}}><i class="bi bi-trash-fill danger"></i></Button
 							></td
 						>
 					</tr>
@@ -161,12 +162,26 @@
 		</table>
 	{/if}
 
-	<h2>Users</h2>
+	<h2 class="text-2xl">Users</h2>
 	<form on:submit|preventDefault>
 		<label for="username">Username</label>
-		<input bind:value={username} id="username" type="text" />
-		<button on:click={banUser} type="submit" class="danger m10px">Ban</button>
-		<button on:click={unbanUser} type="submit" class="danger m10px">Unban</button>
+		<input class="text-black p-2" bind:value={username} id="username" type="text" />
+		<Button on:click={banUser} variant="danger">Ban</Button>
+		<Button on:click={unbanUser} variant="danger">Unban</Button>
 	</form>
 	<p>{userResponseMessage}</p>
 </main>
+
+<style lang="postcss">
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 10px;
+	}
+	th,
+	td {
+		padding: 10px;
+		margin: 0;
+		border: 1px solid #ffffff;
+	}
+</style>
